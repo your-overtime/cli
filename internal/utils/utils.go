@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -17,4 +18,8 @@ func ReadTextFromStdin(text string) string {
 		log.Debug(err)
 	}
 	return strings.ReplaceAll(input, "\n", "")
+}
+
+func FormatTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04")
 }

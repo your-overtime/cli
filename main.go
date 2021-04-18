@@ -1,13 +1,14 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"git.goasum.de/jasper/overtime-cli/cmd"
 	"git.goasum.de/jasper/overtime-cli/internal/client"
 	"git.goasum.de/jasper/overtime-cli/internal/conf"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -50,18 +51,24 @@ func main() {
 		EnableBashCompletion: true,
 		Name:                 "Overtime CLI",
 		Usage:                "Controll your working time",
-		Version:              "0.0.1",
+		Version:              "1.0.0",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:  "debug",
-				Value: false,
-				Usage: "enables debug logging",
+				Name:    "debug",
+				Aliases: []string{"d"},
+				Value:   false,
+				Usage:   "enables debug logging",
 			},
 		},
-		Action: func(c *cli.Context) error {
+		Before: func(c *cli.Context) error {
 			setLogger(c.Bool("debug"))
 			createState()
-			return nil
+			if len(config.Token) > 0 && len(config.Host) > 0 {
+				c := client.Init(config.Host, config.Token)
+				otc = &c
+				return nil
+			}
+			return errors.New("No conf loaded")
 		},
 		Commands: []*cli.Command{
 			{
@@ -103,16 +110,68 @@ func main() {
 						},
 					},
 					{
+						Name:    "end",
+						Aliases: []string{"e"},
+						Usage:   "end currently running activity",
+						Action: func(c *cli.Context) error {
+							return otc.StopActivity()
+						},
+					},
+					{
 						Name:    "overview",
 						Aliases: []string{"o"},
 						Usage:   "shows current overview",
 						Action: func(c *cli.Context) error {
-							setLogger(c.Bool("debug"))
-							createState()
-							if otc != nil {
-								return otc.CalcCurrentOverview()
+							return otc.CalcCurrentOverview()
+						},
+					},
+					{
+						Name:    "activities",
+						Aliases: []string{"a"},
+						Usage:   "fetch activities between start and end",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								Value:       cli.NewTimestamp(time.Now().AddDate(0, 0, -1)),
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02",
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								Value:       cli.NewTimestamp(time.Now()),
+								DefaultText: "now",
+								Layout:      "2006-01-02",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.GetActivities(*c.Timestamp("start"), *c.Timestamp("end"))
+						},
+					},
+					{
+						Name:    "create",
+						Aliases: []string{"c"},
+						Usage:   "creates a activity",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02 15:04",
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								DefaultText: "now",
+								Layout:      "2006-01-02 15:04",
+							}, &cli.StringFlag{
+								Name:  "description",
+								Value: "",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							desc := c.String("description")
+							if len(desc) == 0 {
+								desc = config.DefaultActivityDesc
 							}
-							return errors.New("No conf loaded")
+							return otc.AddActivity(desc, c.Timestamp("start"), c.Timestamp("end"))
 						},
 					},
 				},

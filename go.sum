@@ -2,6 +2,16 @@ git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2 h1:io1V3/NHAEZ9
 git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
 git.goasum.de/jasper/overtime v0.0.0-20210417213854-43ce5ef01358 h1:Z/S9/37KEWQpoI+PIvzVkrWQgSwIYqdMpnlIFkF0bC8=
 git.goasum.de/jasper/overtime v0.0.0-20210417213854-43ce5ef01358/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
+git.goasum.de/jasper/overtime v1.0.0 h1:stK+ZahkTwsCYJkQhyO28+DIYKhkxAb9c80gvowRq28=
+git.goasum.de/jasper/overtime v1.0.0/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
+git.goasum.de/jasper/overtime v1.0.1 h1:/o7JoTkvTmaTFr38pbAh3eQAIb+B6NRbnCbaHfkBAcI=
+git.goasum.de/jasper/overtime v1.0.1/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
+git.goasum.de/jasper/overtime v1.0.2 h1:9Q1kjc7tP8lf/V2/deM5GqDYfpx57M4Ag+cIWcpHSNA=
+git.goasum.de/jasper/overtime v1.0.2/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
+git.goasum.de/jasper/overtime v1.0.4 h1:F7t4vfNlhOpOXHBJSgxdXMu0TnfZH4a09WSuQ3PGeGM=
+git.goasum.de/jasper/overtime v1.0.4/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
+git.goasum.de/jasper/overtime v1.0.5 h1:d51F+xY8UQWh2ild/mlHXrPPNOCgkRWMztWnJlwglMY=
+git.goasum.de/jasper/overtime v1.0.5/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
