@@ -156,11 +156,13 @@ func main() {
 								Name:        "start",
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02 15:04",
+								Required:    true,
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
 								DefaultText: "now",
 								Layout:      "2006-01-02 15:04",
+								Required:    true,
 							}, &cli.StringFlag{
 								Name:  "description",
 								Value: "",
@@ -172,6 +174,20 @@ func main() {
 								desc = config.DefaultActivityDesc
 							}
 							return otc.AddActivity(desc, c.Timestamp("start"), c.Timestamp("end"))
+						},
+					},
+					{
+						Name:    "import",
+						Aliases: []string{"i"},
+						Usage:   "imports activities from kimai",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "csv",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.ImportKimai(c.Path("csv"))
 						},
 					},
 				},

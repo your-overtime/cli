@@ -1,7 +1,9 @@
 package client
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"text/tabwriter"
@@ -42,12 +44,51 @@ func (c *Client) AddActivity(desc string, start *time.Time, end *time.Time) erro
 	return nil
 }
 
+func (c *Client) ImportKimai(filePath string) error {
+	log.Debug(filePath)
+	fr, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	r := csv.NewReader(fr)
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		date := record[0]
+		if len(date) != 10 {
+			continue
+		}
+
+		start, err := time.Parse("2006-01-02 15:04", fmt.Sprintf("%s %s", date, record[1]))
+		if err != nil {
+			return nil
+		}
+		end, err := time.Parse("2006-01-02 15:04", fmt.Sprintf("%s %s", date, record[2]))
+		if err != nil {
+			return nil
+		}
+		desc := record[10]
+		err = c.AddActivity(desc, &start, &end)
+		if err != nil {
+			return nil
+		}
+	}
+	return nil
+}
+
 func (c *Client) StartActivity(desc string) error {
 	a, err := c.ots.StartActivity(desc, pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		fmt.Println("\nA activity is currently running")
-		o, err := c.ots.CalcCurrentOverview(pkg.Employee{})
+		o, err := c.ots.CalcOverview(pkg.Employee{})
 		if err != nil {
 			log.Debug(err)
 			return err
@@ -108,25 +149,38 @@ func printActivity(w *tabwriter.Writer, a *pkg.Activity) {
 	if a.End != nil {
 		fmt.Fprintf(w, "End\t: %s\n", utils.FormatTime(*a.End))
 		diff := a.End.Sub(*a.Start)
-		hs, mf := math.Modf(diff.Hours())
-		fmt.Fprintf(w, "Duration\t: %d:%d\n", int(hs), int(mf*60))
+		fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(diff.Minutes())))
 	}
 }
 
+func formatMinutes(t int64) string {
+	ds, hs1 := math.Modf(float64(t) / (24 * 60))
+	hs2, mf := math.Modf(hs1 * 24)
+	if ds == 0 {
+		return fmt.Sprintf("%02dh:%02dm", int(hs2), int(mf*60))
+	}
+	return fmt.Sprintf("%02dd:%02dh:%02dm", int(ds), int(hs2), int(mf*60))
+}
+
 func (c *Client) CalcCurrentOverview() error {
-	o, err := c.ots.CalcCurrentOverview(pkg.Employee{})
+	o, err := c.ots.CalcOverview(pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	w := tabwriter.NewWriter(os.Stdout, 16, 4, 3, '.', tabwriter.TabIndent)
 
 	fmt.Fprintln(w, "\nOverview")
 	fmt.Fprintf(w, "Current time\t: %s\n", utils.FormatTime(o.Date))
-	fmt.Fprintf(w, "WeeK number\t: %d\n", o.WeekNumber)
-	fmt.Fprintf(w, "ActiveTime\t: %d\n", o.ActiveTimeThisWeek)
-	fmt.Fprintf(w, "Overtime\t: %d\n", o.OvertimeInMinutes)
+	fmt.Fprintf(w, "Week number\t: %d\n", o.WeekNumber)
+	fmt.Fprintf(w, "Duration\t: Day\t Week\t Month \t Year\n")
+	fmt.Fprintf(w, "ActiveTime\t: %s\t %s\t %s\t %s\n",
+		formatMinutes(o.ActiveTimeThisDayInMinutes), formatMinutes(o.ActiveTimeThisWeekInMinutes),
+		formatMinutes(o.ActiveTimeThisMonthInMinutes), formatMinutes(o.ActiveTimeThisYearInMinutes))
+	fmt.Fprintf(w, "Overtime\t: %s\t %s\t %s\t %s\n",
+		formatMinutes(o.OvertimeThisDayInMinutes), formatMinutes(o.OvertimeThisWeekInMinutes),
+		formatMinutes(o.OvertimeThisMonthInMinutes), formatMinutes(o.OvertimeThisYearInMinutes))
 
 	if o.ActiveActivity != nil {
 		a := o.ActiveActivity
