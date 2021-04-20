@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math"
@@ -126,8 +127,17 @@ func (c *Client) StopActivity() error {
 	return nil
 }
 
-func (c *Client) GetActivities(start time.Time, end time.Time) error {
+func (c *Client) GetActivities(start time.Time, end time.Time, asJSON bool) error {
 	as, err := c.ots.GetActivities(start, end, pkg.Employee{})
+
+	if asJSON {
+		jsonData, err := json.MarshalIndent(as, "", " ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(jsonData))
+		return nil
+	}
 	if err != nil {
 		log.Debug(err)
 		return err

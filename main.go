@@ -35,15 +35,18 @@ func loadConfig() {
 	if err != nil {
 		log.Debug(err)
 		fmt.Println("Please run \"conf init\"")
+		os.Exit(1)
 	}
 }
 
-func createState() {
+func createState() error {
 	loadConfig()
-	if len(config.Token) > 0 && len(config.Host) > 0 {
+	if config != nil && len(config.Token) > 0 && len(config.Host) > 0 {
 		c := client.Init(config.Host, config.Token)
 		otc = &c
+		return nil
 	}
+	return errors.New("No valid config found")
 }
 
 func main() {
@@ -62,13 +65,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 			setLogger(c.Bool("debug"))
-			createState()
-			if len(config.Token) > 0 && len(config.Host) > 0 {
-				c := client.Init(config.Host, config.Token)
-				otc = &c
-				return nil
-			}
-			return errors.New("No conf loaded")
+			return nil
 		},
 		Commands: []*cli.Command{
 			{
@@ -90,6 +87,16 @@ func main() {
 				Name:    "activity",
 				Aliases: []string{"a"},
 				Usage:   "handles activities",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
 				Subcommands: []*cli.Command{
 					{
 						Name:    "start",
@@ -132,7 +139,7 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
-								Value:       cli.NewTimestamp(time.Now().AddDate(0, 0, -1)),
+								Value:       cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())),
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02",
 							},
@@ -142,9 +149,12 @@ func main() {
 								DefaultText: "now",
 								Layout:      "2006-01-02",
 							},
+							&cli.BoolFlag{
+								Name: "json",
+							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.GetActivities(*c.Timestamp("start"), *c.Timestamp("end"))
+							return otc.GetActivities(*c.Timestamp("start"), *c.Timestamp("end"), c.Bool("json"))
 						},
 					},
 					{
