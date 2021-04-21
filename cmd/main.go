@@ -83,6 +83,59 @@ func main() {
 				},
 			},
 			{
+				Name:    "token",
+				Aliases: []string{"t"},
+				Usage:   "handles tokens",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:    "create",
+						Aliases: []string{"c"},
+						Usage:   "creates a token",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.CreateTokenViaCli(c.String("name"))
+						},
+					},
+					{
+						Name:    "get",
+						Aliases: []string{"g"},
+						Usage:   "get tokens",
+						Action: func(c *cli.Context) error {
+							return otc.GetTokens()
+						},
+					},
+					{
+						Name:    "delete",
+						Aliases: []string{"c"},
+						Usage:   "deletes a token",
+						Flags: []cli.Flag{
+							&cli.UintFlag{
+								Name:     "id",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.DeleteToken(c.Uint("id"))
+						},
+					},
+				},
+			},
+			{
 				Name:    "activity",
 				Aliases: []string{"a"},
 				Usage:   "handles activities",
@@ -223,13 +276,14 @@ func main() {
 					return errors.New("No conf loaded")
 				},
 				Subcommands: []*cli.Command{
-					&cli.Command{
+					{
 						Name:    "add",
 						Aliases: []string{"a"},
+						Usage:   "creates a new employee",
 						Flags: []cli.Flag{
 							&cli.UintFlag{
 								Name:     "WeekWorkingTimeInMinutes",
-								Aliases:  []string{"wwt"},
+								Aliases:  []string{"wwtim"},
 								Required: true,
 							},
 							&cli.StringFlag{
@@ -255,6 +309,19 @@ func main() {
 						},
 						Action: func(c *cli.Context) error {
 							return otc.AddEmployee(c.String("name"), c.String("surname"), c.String("login"), c.String("password"), c.Uint("WeekWorkingTimeInMinutes"), c.String("adminToken"))
+						},
+					},
+					{
+						Name:    "delete",
+						Aliases: []string{"d"},
+						Usage:   "deletes a employee",
+						Flags: []cli.Flag{&cli.StringFlag{
+							Name:     "login",
+							Aliases:  []string{"l"},
+							Required: true,
+						}},
+						Action: func(c *cli.Context) error {
+							return otc.DeleteEmployee(c.String("login"), c.String("adminToken"))
 						},
 					},
 				},

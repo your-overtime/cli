@@ -20,9 +20,9 @@ type Client struct {
 	ots pkg.OvertimeService
 }
 
-func Init(host string, token string) Client {
+func Init(host string, authHeader string) Client {
 	return Client{
-		ots: pkg.InitOvertimeClient(host, fmt.Sprintf("token %s", token)),
+		ots: pkg.InitOvertimeClient(host, authHeader),
 	}
 }
 
@@ -41,11 +41,84 @@ func (c *Client) AddEmployee(name string, surname string, login string, pw strin
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
-	fmt.Fprintf(w, "ID:\t%d\n", e.ID)
-	fmt.Fprintf(w, "Login:\t%s\n", e.Login)
-	fmt.Fprintf(w, "Name:\t%s\n", e.Name)
-	fmt.Fprintf(w, "Surname:\t%s\n", e.Surname)
-	fmt.Fprintf(w, "WeekWorkingTimeInMinutes:\t%d\n", e.WeekWorkingTimeInMinutes)
+	fmt.Fprintf(w, "ID\t: %d\n", e.ID)
+	fmt.Fprintf(w, "Login\t: %s\n", e.Login)
+	fmt.Fprintf(w, "Name\t: %s\n", e.Name)
+	fmt.Fprintf(w, "Surname\t: %s\n", e.Surname)
+	fmt.Fprintf(w, "WeekWorkingTimeInMinutes\t: %d\n", e.WeekWorkingTimeInMinutes)
+	w.Flush()
+
+	return nil
+}
+
+func (c *Client) DeleteEmployee(login string, adminToken string) error {
+	err := c.ots.DeleteEmployee(login, adminToken)
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	println("Employee deleted")
+
+	return nil
+}
+
+func (c *Client) CreateTokenViaCli(name string) error {
+	t, err := c.CreateToken(name)
+	if err != nil {
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	fmt.Fprintf(w, "ID\t: %d\n", t.ID)
+	fmt.Fprintf(w, "Token\t: %s\n", t.Token)
+	fmt.Fprintf(w, "Name\t: %s\n\n", t.Name)
+	w.Flush()
+
+	return nil
+}
+
+func (c *Client) CreateToken(name string) (*pkg.Token, error) {
+	t, err := c.ots.CreateToken(pkg.InputToken{Name: name}, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+
+	return t, nil
+}
+
+func (c *Client) DeleteToken(id uint) error {
+	err := c.ots.DeleteToken(id, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	println("Token deleted")
+
+	return nil
+}
+
+func (c *Client) GetTokens() error {
+	ts, err := c.ots.GetTokens(pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	println()
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	for _, t := range ts {
+		fmt.Fprintf(w, "ID\t: %d\n", t.ID)
+		fmt.Fprintf(w, "Token\t: %s\n", t.Token)
+		fmt.Fprintf(w, "Name\t: %s\n\n", t.Name)
+	}
+
 	w.Flush()
 
 	return nil

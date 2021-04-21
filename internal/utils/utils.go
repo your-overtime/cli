@@ -17,7 +17,7 @@ func ReadTextFromStdin(text string) string {
 	if err != nil {
 		log.Debug(err)
 	}
-	return strings.ReplaceAll(input, "\n", "")
+	return strings.TrimSpace(strings.ReplaceAll(input, "\n", ""))
 }
 
 func FormatTime(t time.Time) string {
