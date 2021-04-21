@@ -3,7 +3,6 @@ package conf
 import (
 	"encoding/base64"
 	"fmt"
-	"strings"
 	"time"
 
 	"git.goasum.de/jasper/overtime-cli/internal/client"
@@ -21,7 +20,6 @@ func InitConf() error {
 		login := utils.ReadTextFromStdin("login:\n")
 		pw := utils.ReadTextFromStdin("password:\n")
 		c := client.Init(url, basicAuth(login, pw))
-		fmt.Println(basicAuth(login, pw), " .", strings.TrimSpace(login), ". .", strings.TrimSpace(pw), ".")
 		t, err := c.CreateToken(fmt.Sprintf("CLI %s", time.Now()))
 		if err != nil {
 			return err
