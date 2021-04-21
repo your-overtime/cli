@@ -26,6 +26,31 @@ func Init(host string, token string) Client {
 	}
 }
 
+func (c *Client) AddEmployee(name string, surname string, login string, pw string, wwt uint, adminToken string) error {
+	e, err := c.ots.SaveEmployee(pkg.Employee{
+		User: &pkg.User{
+			Name:     name,
+			Surname:  surname,
+			Login:    login,
+			Password: pw,
+		},
+		WeekWorkingTimeInMinutes: wwt,
+	}, adminToken)
+	if err != nil {
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	fmt.Fprintf(w, "ID:\t%d\n", e.ID)
+	fmt.Fprintf(w, "Login:\t%s\n", e.Login)
+	fmt.Fprintf(w, "Name:\t%s\n", e.Name)
+	fmt.Fprintf(w, "Surname:\t%s\n", e.Surname)
+	fmt.Fprintf(w, "WeekWorkingTimeInMinutes:\t%d\n", e.WeekWorkingTimeInMinutes)
+	w.Flush()
+
+	return nil
+}
+
 func (c *Client) AddActivity(desc string, start *time.Time, end *time.Time) error {
 	a, err := c.ots.AddActivity(pkg.Activity{
 		Start:       start,

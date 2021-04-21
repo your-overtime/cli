@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"git.goasum.de/jasper/overtime-cli/cmd"
 	"git.goasum.de/jasper/overtime-cli/internal/client"
 	"git.goasum.de/jasper/overtime-cli/internal/conf"
 	log "github.com/sirupsen/logrus"
@@ -78,7 +77,7 @@ func main() {
 						Aliases: []string{"i"},
 						Usage:   "create or replace the config files",
 						Action: func(ctx *cli.Context) error {
-							return cmd.InitConf()
+							return conf.InitConf()
 						},
 					},
 				},
@@ -198,6 +197,64 @@ func main() {
 						},
 						Action: func(c *cli.Context) error {
 							return otc.ImportKimai(c.Path("csv"))
+						},
+					},
+				},
+			},
+			{
+				Name:    "employee",
+				Aliases: []string{"e"},
+				Usage:   "handles employees",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "adminToken",
+						Aliases:  []string{"at"},
+						Required: true,
+					},
+				},
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Subcommands: []*cli.Command{
+					&cli.Command{
+						Name:    "add",
+						Aliases: []string{"a"},
+						Flags: []cli.Flag{
+							&cli.UintFlag{
+								Name:     "WeekWorkingTimeInMinutes",
+								Aliases:  []string{"wwt"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "surname",
+								Aliases:  []string{"s"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "login",
+								Aliases:  []string{"l"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "password",
+								Aliases:  []string{"p"},
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.AddEmployee(c.String("name"), c.String("surname"), c.String("login"), c.String("password"), c.Uint("WeekWorkingTimeInMinutes"), c.String("adminToken"))
 						},
 					},
 				},
