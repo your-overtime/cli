@@ -241,11 +241,19 @@ func (c *Client) GetActivities(start time.Time, end time.Time, asJSON bool) erro
 		return err
 	}
 	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, '.', tabwriter.TabIndent)
+	mins := 0
+	now := time.Now()
 	for i, a := range as {
 		fmt.Fprintf(w, "No\t: %d\n", i+1)
 		printActivity(w, &a)
 		fmt.Fprintln(w)
+		if a.End != nil {
+			mins += int(a.End.Sub(*a.Start).Minutes())
+		} else {
+			mins += int(now.Sub(*a.Start).Minutes())
+		}
 	}
+	fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(mins)))
 	w.Flush()
 	return nil
 }
