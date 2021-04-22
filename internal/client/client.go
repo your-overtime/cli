@@ -278,6 +278,11 @@ func formatMinutes(t int64) string {
 	return fmt.Sprintf("%02dd:%02dh:%02dm", int(ds), int(hs2), int(mf*60))
 }
 
+func formatMinutesToHoursAndMinutes(t int64) string {
+	hs2, mf := math.Modf(float64(t) / 60)
+	return fmt.Sprintf("%02dh:%02dm", int(hs2), int(mf*60))
+}
+
 func (c *Client) CalcCurrentOverview() error {
 	o, err := c.ots.CalcOverview(pkg.Employee{})
 	if err != nil {
@@ -292,10 +297,10 @@ func (c *Client) CalcCurrentOverview() error {
 	fmt.Fprintf(w, "Week number\t: %d\n", o.WeekNumber)
 	fmt.Fprintf(w, "Duration\t: Day\t Week\t Month \t Year\n")
 	fmt.Fprintf(w, "ActiveTime\t: %s\t %s\t %s\t %s\n",
-		formatMinutes(o.ActiveTimeThisDayInMinutes), formatMinutes(o.ActiveTimeThisWeekInMinutes),
+		formatMinutesToHoursAndMinutes(o.ActiveTimeThisDayInMinutes), formatMinutesToHoursAndMinutes(o.ActiveTimeThisWeekInMinutes),
 		formatMinutes(o.ActiveTimeThisMonthInMinutes), formatMinutes(o.ActiveTimeThisYearInMinutes))
 	fmt.Fprintf(w, "Overtime\t: %s\t %s\t %s\t %s\n",
-		formatMinutes(o.OvertimeThisDayInMinutes), formatMinutes(o.OvertimeThisWeekInMinutes),
+		formatMinutesToHoursAndMinutes(o.OvertimeThisDayInMinutes), formatMinutesToHoursAndMinutes(o.OvertimeThisWeekInMinutes),
 		formatMinutes(o.OvertimeThisMonthInMinutes), formatMinutes(o.OvertimeThisYearInMinutes))
 
 	if o.ActiveActivity != nil {
