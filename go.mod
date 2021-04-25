@@ -3,7 +3,7 @@ module git.goasum.de/jasper/overtime-cli
 go 1.15
 
 require (
-	git.goasum.de/jasper/overtime v1.0.6-0.20210421201138-2b6dc637ad58 // indirect
+	git.goasum.de/jasper/overtime v1.0.7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.8.0
 	github.com/urfave/cli/v2 v2.3.0 // indirect

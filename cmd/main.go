@@ -239,6 +239,47 @@ func main() {
 						},
 					},
 					{
+						Name:    "update",
+						Aliases: []string{"u"},
+						Usage:   "updates a activity",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02 15:04",
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								DefaultText: "now",
+								Layout:      "2006-01-02 15:04",
+							}, &cli.StringFlag{
+								Name:  "description",
+								Value: "",
+							},
+							&cli.UintFlag{
+								Name:     "id",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.UpdateActivity(c.String("desc"), c.Timestamp("start"), c.Timestamp("end"), c.Uint("id"))
+						},
+					},
+					{
+						Name:    "delete",
+						Aliases: []string{"d"},
+						Usage:   "deletes a activity",
+						Flags: []cli.Flag{
+							&cli.UintFlag{
+								Name:     "id",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.DeleteActivity(c.Uint("id"))
+						},
+					},
+					{
 						Name:    "import",
 						Aliases: []string{"i"},
 						Usage:   "imports activities from kimai",
@@ -250,6 +291,115 @@ func main() {
 						},
 						Action: func(c *cli.Context) error {
 							return otc.ImportKimai(c.Path("csv"))
+						},
+					},
+				},
+			},
+			{
+				Name:    "hollydays",
+				Aliases: []string{"h"},
+				Usage:   "handles hollydays",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:    "hollydays",
+						Aliases: []string{"h"},
+						Usage:   "fetch hollydays between start and end",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								Value:       cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())),
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02",
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								Value:       cli.NewTimestamp(time.Now()),
+								DefaultText: "now",
+								Layout:      "2006-01-02",
+							},
+							&cli.BoolFlag{
+								Name: "json",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.GetHollydays(*c.Timestamp("start"), *c.Timestamp("end"), c.Bool("json"))
+						},
+					},
+					{
+						Name:    "create",
+						Aliases: []string{"c"},
+						Usage:   "creates a hollyday",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02 15:04",
+								Required:    true,
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								DefaultText: "now",
+								Layout:      "2006-01-02 15:04",
+								Required:    true,
+							}, &cli.StringFlag{
+								Name:     "description",
+								Value:    "",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.AddHollyday(c.String("description"), *c.Timestamp("start"), *c.Timestamp("end"))
+						},
+					},
+					{
+						Name:    "update",
+						Aliases: []string{"u"},
+						Usage:   "updates a hollyday",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:        "start",
+								DefaultText: "now -1 day",
+								Layout:      "2006-01-02 15:04",
+							},
+							&cli.TimestampFlag{
+								Name:        "end",
+								DefaultText: "now",
+								Layout:      "2006-01-02 15:04",
+							}, &cli.StringFlag{
+								Name:  "description",
+								Value: "",
+							},
+							&cli.UintFlag{
+								Name:     "id",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.UpdateHollyday(c.String("description"), c.Timestamp("start"), c.Timestamp("end"), c.Uint("id"))
+						},
+					},
+					{
+						Name:    "delete",
+						Aliases: []string{"d"},
+						Usage:   "deletes a hollyday",
+						Flags: []cli.Flag{
+							&cli.UintFlag{
+								Name:     "id",
+								Required: true,
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.DeleteHollyday(c.Uint("id"))
 						},
 					},
 				},

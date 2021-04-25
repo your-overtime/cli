@@ -143,6 +143,48 @@ func (c *Client) AddActivity(desc string, start *time.Time, end *time.Time) erro
 	return nil
 }
 
+func (c *Client) UpdateActivity(desc string, start *time.Time, end *time.Time, id uint) error {
+	ca, err := c.ots.GetActivity(id, pkg.Employee{})
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+	if len(desc) > 0 {
+		ca.Description = desc
+	}
+	if start != nil {
+		ca.Start = start
+	}
+	if end != nil {
+		ca.End = end
+	}
+	a, err := c.ots.UpdateActivity(*ca, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	printActivity(w, a)
+	w.Flush()
+
+	return nil
+}
+
+func (c *Client) DeleteActivity(id uint) error {
+	err := c.ots.DelActivity(id, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	println("Activity deleted")
+
+	return nil
+}
+
 func (c *Client) ImportKimai(filePath string) error {
 	log.Debug(filePath)
 	fr, err := os.Open(filePath)
@@ -269,6 +311,15 @@ func printActivity(w *tabwriter.Writer, a *pkg.Activity) {
 	}
 }
 
+func printHollyday(w *tabwriter.Writer, a *pkg.Hollyday) {
+	fmt.Fprintf(w, "ID\t: %d\n", a.ID)
+	fmt.Fprintf(w, "Description\t: %s\n", a.Description)
+	fmt.Fprintf(w, "Start\t: %s\n", utils.FormatTime(a.Start))
+	fmt.Fprintf(w, "End\t: %s\n", utils.FormatTime(a.End))
+	diff := a.End.Sub(a.Start)
+	fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(diff.Minutes())))
+}
+
 func formatMinutes(t int64) string {
 	ds, hs1 := math.Modf(float64(t) / (24 * 60))
 	hs2, mf := math.Modf(hs1 * 24)
@@ -312,6 +363,95 @@ func (c *Client) CalcCurrentOverview() error {
 	}
 
 	w.Flush()
+
+	return nil
+}
+
+func (c *Client) AddHollyday(desc string, start time.Time, end time.Time) error {
+	h, err := c.ots.AddHollyday(pkg.Hollyday{
+		Start:       start,
+		End:         end,
+		Description: desc,
+	}, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	printHollyday(w, h)
+	w.Flush()
+
+	return nil
+}
+
+func (c *Client) GetHollydays(start time.Time, end time.Time, asJSON bool) error {
+	hs, err := c.ots.GetHollydays(start, end, pkg.Employee{})
+
+	if asJSON {
+		jsonData, err := json.MarshalIndent(hs, "", " ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(jsonData))
+		return nil
+	}
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, '.', tabwriter.TabIndent)
+	mins := 0
+	for i, h := range hs {
+		fmt.Fprintf(w, "No\t: %d\n", i+1)
+		printHollyday(w, &h)
+		fmt.Fprintln(w)
+		mins += int(h.End.Sub(h.Start).Minutes())
+	}
+	fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(mins)))
+	w.Flush()
+	return nil
+}
+
+func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, id uint) error {
+	ch, err := c.ots.GetHollyday(id, pkg.Employee{})
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+	if len(desc) > 0 {
+		ch.Description = desc
+	}
+	if start != nil {
+		ch.Start = *start
+	}
+	if end != nil {
+		ch.End = *end
+	}
+	h, err := c.ots.UpdateHollyday(*ch, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
+	printHollyday(w, h)
+	w.Flush()
+
+	return nil
+}
+
+func (c *Client) DeleteHollyday(id uint) error {
+	err := c.ots.DelHollyday(id, pkg.Employee{})
+
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+
+	println("Hollyday deleted")
 
 	return nil
 }
