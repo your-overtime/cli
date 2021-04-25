@@ -208,5 +208,12 @@ func InitConf() error {
 		Token:               fmt.Sprintf("token %s", token),
 		DefaultActivityDesc: defaultActivityDesc,
 	}
-	return WriteConfig(c)
+	err = WriteConfig(c)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("The configuration is finshed and the \"otcli\" can be used now!!")
+
+	return nil
 }
