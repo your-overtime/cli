@@ -1,4 +1,4 @@
-package conf
+package client
 
 import (
 	"encoding/base64"
@@ -7,9 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"git.goasum.de/jasper/overtime-cli/internal/conf"
 	"github.com/AlecAivazis/survey/v2"
-
-	"git.goasum.de/jasper/overtime-cli/internal/client"
 )
 
 func basicAuth(login string, password string) string {
@@ -39,7 +38,7 @@ func ConvertWWTStrToMins(wwtStr string) (uint, error) {
 	return uint(h*60 + m), nil
 }
 
-func createUser(c *client.Client, adminToken string) error {
+func createUser(c *Client, adminToken string) error {
 
 	return nil
 }
@@ -150,7 +149,7 @@ func InitConf() error {
 			if err != nil {
 				return err
 			}
-			c := client.Init(url, fmt.Sprintf("token %s", adminToken))
+			c := Init(url, fmt.Sprintf("token %s", adminToken))
 			err = c.AddEmployee(answers3.Name, answers3.Surname, answers3.Login, answers3.Password, wwtim, adminToken)
 			if err != nil {
 				return err
@@ -184,7 +183,7 @@ func InitConf() error {
 			login = answers2.Login
 			password = answers2.Password
 		}
-		c := client.Init(url, basicAuth(login, password))
+		c := Init(url, basicAuth(login, password))
 		t, err := c.CreateToken(fmt.Sprintf("CLI %s", time.Now()))
 		if err != nil {
 			return err
@@ -203,12 +202,12 @@ func InitConf() error {
 		}
 		survey.AskOne(prompt, &defaultActivityDesc)
 	}
-	c := Config{
+	c := conf.Config{
 		Host:                url,
 		Token:               fmt.Sprintf("token %s", token),
 		DefaultActivityDesc: defaultActivityDesc,
 	}
-	err = WriteConfig(c)
+	err = conf.WriteConfig(c)
 	if err != nil {
 		return err
 	}

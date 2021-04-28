@@ -1,6 +1,7 @@
 git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2 h1:io1V3/NHAEZ9gCPY8yffkSU5WDdcPHzd/A5DKdRLWWw=
 git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
 git.goasum.de/jasper/go-utils v0.0.0-20210421200206-fa38da763607/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
+git.goasum.de/jasper/go-utils v0.0.0-20210428184937-b8616760a432/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
 git.goasum.de/jasper/overtime v0.0.0-20210417213854-43ce5ef01358 h1:Z/S9/37KEWQpoI+PIvzVkrWQgSwIYqdMpnlIFkF0bC8=
 git.goasum.de/jasper/overtime v0.0.0-20210417213854-43ce5ef01358/go.mod h1:yqmqgMtBJ0T4oaJxBA//fvE/tLHXwdJTEFM/32Caeg8=
 git.goasum.de/jasper/overtime v1.0.0 h1:stK+ZahkTwsCYJkQhyO28+DIYKhkxAb9c80gvowRq28=
@@ -31,6 +32,10 @@ git.goasum.de/jasper/overtime v1.0.6 h1:iTCnI2fOaa3eSx83FrqUycbQxJPBHxCHARwSCZQI
 git.goasum.de/jasper/overtime v1.0.6/go.mod h1:MOhGLN09XcESvBDzGaufDR2J/P6suYEvGm0G/uhuRc8=
 git.goasum.de/jasper/overtime v1.0.7 h1:DGjPVA5nQmVABwMm9Yj4AvS0kbmRq/+US0WF+7YupTc=
 git.goasum.de/jasper/overtime v1.0.7/go.mod h1:MOhGLN09XcESvBDzGaufDR2J/P6suYEvGm0G/uhuRc8=
+git.goasum.de/jasper/overtime v1.1.0 h1:XSYi9JZpaAseQr7bknhViprvzpK11MScdgSgufsrgb8=
+git.goasum.de/jasper/overtime v1.1.0/go.mod h1:wQE3jwCWPnfkVBQdV3lLV4515KL7hl3rXa7sW7rQxYY=
+git.goasum.de/jasper/overtime v1.1.1-0.20210428205624-1143c30baa16 h1:lyxcZAwmJGBC2uk1dsbeSIuwwjP7ulbHmXCKrFnzL80=
+git.goasum.de/jasper/overtime v1.1.1-0.20210428205624-1143c30baa16/go.mod h1:8DLiTeBkjzRgGiiIqJUpT+zhdFmN5DKE7iY6UD0Z5eE=
 github.com/AlecAivazis/survey/v2 v2.2.12 h1:5a07y93zA6SZ09gOa9wLVLznF5zTJMQ+pJ3cZK4IuO8=
 github.com/AlecAivazis/survey/v2 v2.2.12/go.mod h1:6d4saEvBsfSHXeN1a5OA5m2+HJ2LuVokllnC77pAIKI=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -65,6 +70,10 @@ github.com/mattn/go-colorable v0.1.2/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVc
 github.com/mattn/go-isatty v0.0.8/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/mattn/go-isatty v0.0.12 h1:wuysRhFDzyxgEmMf5xjvJ2M9dZoWAXNNr5LSBS7uHXY=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
+github.com/mdp/qrterminal v1.0.1 h1:07+fzVDlPuBlXS8tB0ktTAyf+Lp1j2+2zK3fBOL5b7c=
+github.com/mdp/qrterminal v1.0.1/go.mod h1:Z33WhxQe9B6CdW37HaVqcRKzP+kByF3q/qLxOGe12xQ=
+github.com/mdp/qrterminal/v3 v3.0.0 h1:ywQqLRBXWTktytQNDKFjhAvoGkLVN3J2tAFZ0kMd9xQ=
+github.com/mdp/qrterminal/v3 v3.0.0/go.mod h1:NJpfAs7OAm77Dy8EkWrtE4aq+cE6McoLXlBqXQEwvE0=
 github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b h1:j7+1HpAFS1zy5+Q4qx1fWh90gTKwiN4QCGoY9TWyyO4=
 github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b/go.mod h1:01TrycV0kFyexm33Z7vhZRXopbI8J3TDReVlkTgMUxE=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
@@ -116,3 +125,5 @@ gorm.io/driver/mysql v1.0.3/go.mod h1:twGxftLBlFgNVNakL7F+P/x9oYqoymG3YYT8cAfI9o
 gorm.io/gorm v1.20.4/go.mod h1:0HFTzE/SqkGTzK6TlDPPQbAYCluiVvhzoA1+aVyzenw=
 gorm.io/gorm v1.20.8 h1:iToaOdZgjNvlc44NFkxfLa3U9q63qwaxt0FdNCiwOMs=
 gorm.io/gorm v1.20.8/go.mod h1:0HFTzE/SqkGTzK6TlDPPQbAYCluiVvhzoA1+aVyzenw=
+rsc.io/qr v0.2.0 h1:6vBLea5/NRMVTz8V66gipeLycZMl/+UlFmk8DvqQ6WY=
+rsc.io/qr v0.2.0/go.mod h1:IF+uZjkb9fqyeF/4tlBoynqmQxUoPfWEKh921coOuXs=

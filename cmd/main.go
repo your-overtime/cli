@@ -77,7 +77,64 @@ func main() {
 						Aliases: []string{"i"},
 						Usage:   "create or replace the config files",
 						Action: func(ctx *cli.Context) error {
-							return conf.InitConf()
+							return client.InitConf()
+						},
+					},
+				},
+			},
+			{
+				Name:  "app",
+				Usage: "handles app setup",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:    "link",
+						Aliases: []string{"l"},
+						Usage:   "Links a app",
+						Action: func(ctx *cli.Context) error {
+							return otc.LinkApp()
+						},
+					},
+				},
+			},
+			{
+				Name:    "account",
+				Aliases: []string{"ac"},
+				Usage:   "change user information",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:    "change",
+						Aliases: []string{"c"},
+						Usage:   "Change account values",
+						Action: func(ctx *cli.Context) error {
+							return otc.ChangeAccount()
+						},
+					},
+					{
+						Name:    "get",
+						Aliases: []string{"g"},
+						Usage:   "get account values",
+						Action: func(ctx *cli.Context) error {
+							return otc.GetAccount()
 						},
 					},
 				},
