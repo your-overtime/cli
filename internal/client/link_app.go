@@ -41,9 +41,9 @@ func (c *Client) LinkApp() error {
 		Writer:    os.Stdout,
 		BlackChar: qrterminal.WHITE,
 		WhiteChar: qrterminal.BLACK,
-		QuietZone: 1,
+		QuietZone: 4,
 	}
-	payload, err := json.Marshal(map[string]string{"url": co.Host, "authheader": token})
+	payload, err := json.Marshal(map[string]string{"url": co.Host, "authheader": token, "desc": co.DefaultActivityDesc})
 	qrterminal.GenerateWithConfig(string(payload), qc)
 
 	return nil
