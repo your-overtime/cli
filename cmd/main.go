@@ -48,6 +48,14 @@ func createState() error {
 	return errors.New("No valid config found")
 }
 
+func fixLocation(t *time.Time) *time.Time {
+	if t != nil {
+		newT := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, time.Local)
+		return &newT
+	}
+	return nil
+}
+
 func main() {
 	app := &cli.App{
 		EnableBashCompletion: true,
@@ -263,7 +271,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.GetActivities(*c.Timestamp("start"), *c.Timestamp("end"), c.Bool("json"))
+							return otc.GetActivities(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
 						},
 					},
 					{
@@ -292,7 +300,7 @@ func main() {
 							if len(desc) == 0 {
 								desc = config.DefaultActivityDesc
 							}
-							return otc.AddActivity(desc, c.Timestamp("start"), c.Timestamp("end"))
+							return otc.AddActivity(desc, fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")))
 						},
 					},
 					{
@@ -309,7 +317,9 @@ func main() {
 								Name:        "end",
 								DefaultText: "now",
 								Layout:      "2006-01-02 15:04",
-							}, &cli.StringFlag{
+							},
+
+							&cli.StringFlag{
 								Name:  "description",
 								Value: "",
 							},
@@ -319,7 +329,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.UpdateActivity(c.String("desc"), c.Timestamp("start"), c.Timestamp("end"), c.Uint("id"))
+							return otc.UpdateActivity(c.String("desc"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
 						},
 					},
 					{
@@ -389,7 +399,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.GetHollydays(*c.Timestamp("start"), *c.Timestamp("end"), c.Bool("json"))
+							return otc.GetHollydays(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
 						},
 					},
 					{
@@ -415,7 +425,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.AddHollyday(c.String("description"), *c.Timestamp("start"), *c.Timestamp("end"))
+							return otc.AddHollyday(c.String("description"), *fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")))
 						},
 					},
 					{
@@ -442,7 +452,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.UpdateHollyday(c.String("description"), c.Timestamp("start"), c.Timestamp("end"), c.Uint("id"))
+							return otc.UpdateHollyday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
 						},
 					},
 					{
