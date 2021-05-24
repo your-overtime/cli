@@ -408,24 +408,29 @@ func main() {
 						Usage:   "creates a hollyday",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
-								Name:        "start",
-								DefaultText: "now -1 day",
-								Layout:      "2006-01-02 15:04",
-								Required:    true,
+								Name:     "start",
+								Layout:   "2006-01-02",
+								Required: true,
+								Aliases:  []string{"s"},
 							},
 							&cli.TimestampFlag{
-								Name:        "end",
-								DefaultText: "now",
-								Layout:      "2006-01-02 15:04",
-								Required:    true,
+								Name:    "end",
+								Layout:  "2006-01-02",
+								Aliases: []string{"e"},
 							}, &cli.StringFlag{
 								Name:     "description",
-								Value:    "",
 								Required: true,
+								Aliases:  []string{"d"},
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.AddHollyday(c.String("description"), *fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")))
+							e := fixLocation(c.Timestamp("end"))
+							s := fixLocation(c.Timestamp("start"))
+							if e == nil {
+								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
+								e = &ce
+							}
+							return otc.AddHollyday(c.String("description"), *s, *e)
 						},
 					},
 					{
