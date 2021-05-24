@@ -133,8 +133,38 @@ func main() {
 						Name:    "change",
 						Aliases: []string{"c"},
 						Usage:   "Change account values",
-						Action: func(ctx *cli.Context) error {
-							return otc.ChangeAccount()
+						Flags: []cli.Flag{
+							&cli.BoolFlag{
+								Name:    "name",
+								Aliases: []string{"n"},
+								Usage:   "change name",
+							},
+							&cli.BoolFlag{
+								Name:    "surname",
+								Aliases: []string{"s"},
+								Usage:   "change surname",
+							},
+							&cli.BoolFlag{
+								Name:    "login",
+								Aliases: []string{"l"},
+								Usage:   "change login",
+							},
+							&cli.BoolFlag{
+								Name:    "password",
+								Aliases: []string{"p"},
+								Usage:   "change password",
+							},
+							&cli.BoolFlag{
+								Name:  "wwt",
+								Usage: "change week working time",
+							},
+							&cli.BoolFlag{
+								Name:  "wwd",
+								Usage: "change week working day",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("wwd"))
 						},
 					},
 					{

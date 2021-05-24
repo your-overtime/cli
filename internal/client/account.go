@@ -10,50 +10,67 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 )
 
-func (c *Client) ChangeAccount() error {
+func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool) error {
 	e, err := c.ots.GetAccount()
 	if err != nil {
 		return err
 	}
 
+	all := !(cn || cs || cl || cp || cwwt || cwwd)
+
 	fields := map[string]interface{}{}
 
-	updateStringValue(fields, fmt.Sprintf("Name: %s", e.Name), "Please type the new name", "Name")
-	updateStringValue(fields, fmt.Sprintf("Surname: %s", e.Surname), "Please type the new surname", "Surname")
-	updateStringValue(fields, fmt.Sprintf("Login: %s", e.Login), "Please type the new login", "Login")
-	changePassword(fields)
-
-	updateValue := false
-	prompt := &survey.Confirm{
-		Message: fmt.Sprintf("Week working time: %s change?", formatMinutesToHoursAndMinutes(int64(e.WeekWorkingTimeInMinutes))),
-	}
-	survey.AskOne(prompt, &updateValue)
-	if updateValue {
-		value := ""
-		prompt := &survey.Input{
-			Message: "Please type your working time per week [32h:30m]",
-		}
-		survey.AskOne(prompt, &value)
-		v, err := ConvertWWTStrToMins(value)
-		if err != nil {
-			return err
-		}
-		fields["WeekWorkingTimeInMinutes"] = v
+	if all || cn {
+		updateStringValue(fields, fmt.Sprintf("Name: %s", e.Name), "Please type the new name", "Name")
 	}
 
-	updateValue = false
-	prompt1 := &survey.Confirm{
-		Message: fmt.Sprintf("Week working days: %s change?", e.WorkingDays),
+	if all || cs {
+		updateStringValue(fields, fmt.Sprintf("Surname: %s", e.Surname), "Please type the new surname", "Surname")
 	}
-	survey.AskOne(prompt1, &updateValue)
-	if updateValue {
-		days := []string{}
-		prompt2 := &survey.MultiSelect{
-			Message: "What days do you prefer:",
-			Options: []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+
+	if all || cl {
+		updateStringValue(fields, fmt.Sprintf("Login: %s", e.Login), "Please type the new login", "Login")
+	}
+
+	if all || cp {
+		changePassword(fields)
+	}
+
+	if all || cwwt {
+		updateValue := false
+		prompt := &survey.Confirm{
+			Message: fmt.Sprintf("Week working time: %s change?", formatMinutesToHoursAndMinutes(int64(e.WeekWorkingTimeInMinutes))),
 		}
-		survey.AskOne(prompt2, &days)
-		fields["WorkingDays"] = strings.Join(days, ",")
+		survey.AskOne(prompt, &updateValue)
+		if updateValue {
+			value := ""
+			prompt := &survey.Input{
+				Message: "Please type your working time per week [32h:30m]",
+			}
+			survey.AskOne(prompt, &value)
+			v, err := ConvertWWTStrToMins(value)
+			if err != nil {
+				return err
+			}
+			fields["WeekWorkingTimeInMinutes"] = v
+		}
+	}
+
+	if all || cwwd {
+		updateValue := false
+		prompt1 := &survey.Confirm{
+			Message: fmt.Sprintf("Week working days: %s change?", e.WorkingDays),
+		}
+		survey.AskOne(prompt1, &updateValue)
+		if updateValue {
+			days := []string{}
+			prompt2 := &survey.MultiSelect{
+				Message: "What days do you prefer:",
+				Options: []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+			}
+			survey.AskOne(prompt2, &days)
+			fields["WorkingDays"] = strings.Join(days, ",")
+		}
 	}
 
 	em, err := c.ots.UpdateAccount(fields, pkg.Employee{})
