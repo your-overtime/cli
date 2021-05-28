@@ -367,11 +367,12 @@ func (c *Client) CalcCurrentOverview() error {
 	return nil
 }
 
-func (c *Client) AddHollyday(desc string, start time.Time, end time.Time) error {
+func (c *Client) AddHollyday(desc string, start time.Time, end time.Time, legalHollyday bool) error {
 	h, err := c.ots.AddHollyday(pkg.Hollyday{
-		Start:       start,
-		End:         end,
-		Description: desc,
+		Start:         start,
+		End:           end,
+		Description:   desc,
+		LegalHollyday: legalHollyday,
 	}, pkg.Employee{})
 
 	if err != nil {
@@ -414,11 +415,14 @@ func (c *Client) GetHollydays(start time.Time, end time.Time, asJSON bool) error
 	return nil
 }
 
-func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, id uint) error {
+func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, id uint, legalHollyday *bool) error {
 	ch, err := c.ots.GetHollyday(id, pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		return err
+	}
+	if legalHollyday != nil {
+		ch.LegalHollyday = *legalHollyday
 	}
 	if len(desc) > 0 {
 		ch.Description = desc

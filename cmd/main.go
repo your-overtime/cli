@@ -447,10 +447,15 @@ func main() {
 								Name:    "end",
 								Layout:  "2006-01-02",
 								Aliases: []string{"e"},
-							}, &cli.StringFlag{
+							},
+							&cli.StringFlag{
 								Name:     "description",
 								Required: true,
 								Aliases:  []string{"d"},
+							},
+							&cli.BoolFlag{
+								Name:    "legalhollyday",
+								Aliases: []string{"l"},
 							},
 						},
 						Action: func(c *cli.Context) error {
@@ -460,7 +465,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.AddHollyday(c.String("description"), *s, *e)
+							return otc.AddHollyday(c.String("description"), *s, *e, c.Bool("legalhollyday"))
 						},
 					},
 					{
@@ -485,9 +490,24 @@ func main() {
 								Name:     "id",
 								Required: true,
 							},
+							&cli.BoolFlag{
+								Name:    "legalhollyday",
+								Aliases: []string{"l"},
+							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.UpdateHollyday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
+							e := fixLocation(c.Timestamp("end"))
+							s := fixLocation(c.Timestamp("start"))
+							if e == nil {
+								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
+								e = &ce
+							}
+							var legalHollyday *bool
+							if c.IsSet("legalhollyday") {
+								t := c.Bool("legalhollyday")
+								legalHollyday = &t
+							}
+							return otc.UpdateHollyday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), legalHollyday)
 						},
 					},
 					{

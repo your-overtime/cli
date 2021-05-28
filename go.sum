@@ -36,6 +36,8 @@ git.goasum.de/jasper/overtime v1.1.0 h1:XSYi9JZpaAseQr7bknhViprvzpK11MScdgSgufsr
 git.goasum.de/jasper/overtime v1.1.0/go.mod h1:wQE3jwCWPnfkVBQdV3lLV4515KL7hl3rXa7sW7rQxYY=
 git.goasum.de/jasper/overtime v1.1.1-0.20210428205624-1143c30baa16 h1:lyxcZAwmJGBC2uk1dsbeSIuwwjP7ulbHmXCKrFnzL80=
 git.goasum.de/jasper/overtime v1.1.1-0.20210428205624-1143c30baa16/go.mod h1:8DLiTeBkjzRgGiiIqJUpT+zhdFmN5DKE7iY6UD0Z5eE=
+git.goasum.de/jasper/overtime v1.1.1-0.20210528191932-1d927186fdb6 h1:UoFt4BU6gedaAj36UZP7dmWTfraPx86toqqdduNTxk0=
+git.goasum.de/jasper/overtime v1.1.1-0.20210528191932-1d927186fdb6/go.mod h1:8DLiTeBkjzRgGiiIqJUpT+zhdFmN5DKE7iY6UD0Z5eE=
 github.com/AlecAivazis/survey/v2 v2.2.12 h1:5a07y93zA6SZ09gOa9wLVLznF5zTJMQ+pJ3cZK4IuO8=
 github.com/AlecAivazis/survey/v2 v2.2.12/go.mod h1:6d4saEvBsfSHXeN1a5OA5m2+HJ2LuVokllnC77pAIKI=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
