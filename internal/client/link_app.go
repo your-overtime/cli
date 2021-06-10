@@ -39,8 +39,8 @@ func (c *Client) LinkApp() error {
 	qc := qrterminal.Config{
 		Level:     qrterminal.M,
 		Writer:    os.Stdout,
-		BlackChar: qrterminal.WHITE,
-		WhiteChar: qrterminal.BLACK,
+		BlackChar: qrterminal.BLACK,
+		WhiteChar: qrterminal.WHITE,
 		QuietZone: 4,
 	}
 	payload, err := json.Marshal(map[string]string{"url": co.Host, "authheader": token, "desc": co.DefaultActivityDesc})
