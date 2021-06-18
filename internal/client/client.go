@@ -12,8 +12,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"git.goasum.de/jasper/overtime-cli/internal/utils"
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/your-overtime/cli/internal/utils"
+	"github.com/your-overtime/api/pkg"
 )
 
 type Client struct {

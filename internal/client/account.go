@@ -6,7 +6,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/your-overtime/api/pkg"
 	"github.com/AlecAivazis/survey/v2"
 )
 

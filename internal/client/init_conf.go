@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"git.goasum.de/jasper/overtime-cli/internal/conf"
+	"github.com/your-overtime/cli/internal/conf"
 	"github.com/AlecAivazis/survey/v2"
 )
 

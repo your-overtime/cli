@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"git.goasum.de/jasper/overtime-cli/internal/client"
-	"git.goasum.de/jasper/overtime-cli/internal/conf"
+	"github.com/your-overtime/cli/internal/client"
+	"github.com/your-overtime/cli/internal/conf"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
