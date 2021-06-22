@@ -311,7 +311,7 @@ func printActivity(w *tabwriter.Writer, a *pkg.Activity) {
 	}
 }
 
-func printHollyday(w *tabwriter.Writer, a *pkg.Hollyday) {
+func printHoliday(w *tabwriter.Writer, a *pkg.Holiday) {
 	fmt.Fprintf(w, "ID\t: %d\n", a.ID)
 	fmt.Fprintf(w, "Description\t: %s\n", a.Description)
 	fmt.Fprintf(w, "Start\t: %s\n", utils.FormatTime(a.Start))
@@ -367,12 +367,12 @@ func (c *Client) CalcCurrentOverview() error {
 	return nil
 }
 
-func (c *Client) AddHollyday(desc string, start time.Time, end time.Time, legalHollyday bool) error {
-	h, err := c.ots.AddHollyday(pkg.Hollyday{
+func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHoliday bool) error {
+	h, err := c.ots.AddHoliday(pkg.Holiday{
 		Start:         start,
 		End:           end,
 		Description:   desc,
-		LegalHollyday: legalHollyday,
+		LegalHoliday: legalHoliday,
 	}, pkg.Employee{})
 
 	if err != nil {
@@ -381,14 +381,14 @@ func (c *Client) AddHollyday(desc string, start time.Time, end time.Time, legalH
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
-	printHollyday(w, h)
+	printHoliday(w, h)
 	w.Flush()
 
 	return nil
 }
 
-func (c *Client) GetHollydays(start time.Time, end time.Time, asJSON bool) error {
-	hs, err := c.ots.GetHollydays(start, end, pkg.Employee{})
+func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error {
+	hs, err := c.ots.GetHolidays(start, end, pkg.Employee{})
 
 	if asJSON {
 		jsonData, err := json.MarshalIndent(hs, "", " ")
@@ -406,7 +406,7 @@ func (c *Client) GetHollydays(start time.Time, end time.Time, asJSON bool) error
 	mins := 0
 	for i, h := range hs {
 		fmt.Fprintf(w, "No\t: %d\n", i+1)
-		printHollyday(w, &h)
+		printHoliday(w, &h)
 		fmt.Fprintln(w)
 		mins += int(h.End.Sub(h.Start).Minutes())
 	}
@@ -415,14 +415,14 @@ func (c *Client) GetHollydays(start time.Time, end time.Time, asJSON bool) error
 	return nil
 }
 
-func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, id uint, legalHollyday *bool) error {
-	ch, err := c.ots.GetHollyday(id, pkg.Employee{})
+func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday *bool) error {
+	ch, err := c.ots.GetHoliday(id, pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
-	if legalHollyday != nil {
-		ch.LegalHollyday = *legalHollyday
+	if legalHoliday != nil {
+		ch.LegalHoliday = *legalHoliday
 	}
 	if len(desc) > 0 {
 		ch.Description = desc
@@ -433,7 +433,7 @@ func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, i
 	if end != nil {
 		ch.End = *end
 	}
-	h, err := c.ots.UpdateHollyday(*ch, pkg.Employee{})
+	h, err := c.ots.UpdateHoliday(*ch, pkg.Employee{})
 
 	if err != nil {
 		log.Debug(err)
@@ -441,21 +441,21 @@ func (c *Client) UpdateHollyday(desc string, start *time.Time, end *time.Time, i
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.TabIndent)
-	printHollyday(w, h)
+	printHoliday(w, h)
 	w.Flush()
 
 	return nil
 }
 
-func (c *Client) DeleteHollyday(id uint) error {
-	err := c.ots.DelHollyday(id, pkg.Employee{})
+func (c *Client) DeleteHoliday(id uint) error {
+	err := c.ots.DelHoliday(id, pkg.Employee{})
 
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 
-	println("Hollyday deleted")
+	println("Holiday deleted")
 
 	return nil
 }
