@@ -393,9 +393,9 @@ func main() {
 				},
 			},
 			{
-				Name:    "hollydays",
+				Name:    "holidays",
 				Aliases: []string{"h"},
-				Usage:   "handles hollydays",
+				Usage:   "handles holidays",
 				Before: func(c *cli.Context) error {
 					err := createState()
 					if err == nil {
@@ -408,9 +408,9 @@ func main() {
 				},
 				Subcommands: []*cli.Command{
 					{
-						Name:    "hollydays",
+						Name:    "holidays",
 						Aliases: []string{"h"},
-						Usage:   "fetch hollydays between start and end",
+						Usage:   "fetch holidays between start and end",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
@@ -429,13 +429,13 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.GetHollydays(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
+							return otc.GetHolidays(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
 						},
 					},
 					{
 						Name:    "create",
 						Aliases: []string{"c"},
-						Usage:   "creates a hollyday",
+						Usage:   "creates a holiday",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:     "start",
@@ -454,7 +454,7 @@ func main() {
 								Aliases:  []string{"d"},
 							},
 							&cli.BoolFlag{
-								Name:    "legalhollyday",
+								Name:    "legalholiday",
 								Aliases: []string{"l"},
 							},
 						},
@@ -465,13 +465,13 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.AddHollyday(c.String("description"), *s, *e, c.Bool("legalhollyday"))
+							return otc.AddHoliday(c.String("description"), *s, *e, c.Bool("legalholiday"))
 						},
 					},
 					{
 						Name:    "update",
 						Aliases: []string{"u"},
-						Usage:   "updates a hollyday",
+						Usage:   "updates a holiday",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
@@ -491,7 +491,7 @@ func main() {
 								Required: true,
 							},
 							&cli.BoolFlag{
-								Name:    "legalhollyday",
+								Name:    "legalholiday",
 								Aliases: []string{"l"},
 							},
 						},
@@ -502,18 +502,18 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							var legalHollyday *bool
-							if c.IsSet("legalhollyday") {
-								t := c.Bool("legalhollyday")
-								legalHollyday = &t
+							var legalHoliday *bool
+							if c.IsSet("legalholiday") {
+								t := c.Bool("legalholiday")
+								legalHoliday = &t
 							}
-							return otc.UpdateHollyday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), legalHollyday)
+							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), legalHoliday)
 						},
 					},
 					{
 						Name:    "delete",
 						Aliases: []string{"d"},
-						Usage:   "deletes a hollyday",
+						Usage:   "deletes a holiday",
 						Flags: []cli.Flag{
 							&cli.UintFlag{
 								Name:     "id",
@@ -521,7 +521,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.DeleteHollyday(c.Uint("id"))
+							return otc.DeleteHoliday(c.Uint("id"))
 						},
 					},
 				},
