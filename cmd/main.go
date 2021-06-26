@@ -91,6 +91,33 @@ func main() {
 				},
 			},
 			{
+				Name:  "export",
+				Usage: "export all data since given start (default the last year)",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Flags: []cli.Flag{
+					&cli.TimestampFlag{
+						Name: "since",
+						Aliases: []string{"s"},
+					},
+					&cli.StringFlag{
+						Name: "output",
+						Required: true,
+						Aliases: []string{"o"},
+					}
+				},
+				Action: func(c *cli.Context) error {
+					return otc.Export(fixLocation(c.Timestamp("since")), c.String("output"))
+				},
+			{
 				Name:  "app",
 				Usage: "handles app setup",
 				Before: func(c *cli.Context) error {
