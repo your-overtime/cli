@@ -8,6 +8,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.8.0
 	github.com/urfave/cli/v2 v2.3.0 // indirect
-	github.com/your-overtime/api v1.1.6-0.20210723170540-dbc0a8ec5149 // indirect
+	github.com/your-overtime/api v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 )
