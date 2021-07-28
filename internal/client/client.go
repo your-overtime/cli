@@ -229,7 +229,7 @@ func (c *Client) StartActivity(desc string) error {
 	if err != nil {
 		log.Debug(err)
 		fmt.Println("\nA activity is currently running")
-		o, err := c.ots.CalcOverview(pkg.Employee{})
+		o, err := c.ots.CalcOverview(pkg.Employee{}, time.Now())
 		if err != nil {
 			log.Debug(err)
 			return err
@@ -335,7 +335,7 @@ func formatMinutesToHoursAndMinutes(t int64) string {
 }
 
 func (c *Client) CalcCurrentOverview() error {
-	o, err := c.ots.CalcOverview(pkg.Employee{})
+	o, err := c.ots.CalcOverview(pkg.Employee{}, time.Now())
 	if err != nil {
 		log.Debug(err)
 		return err
@@ -457,83 +457,5 @@ func (c *Client) DeleteHoliday(id uint) error {
 
 	println("Holiday deleted")
 
-	return nil
-}
-
-func (c *Client) Export(since *time.Time, output string) error {
-	fmt.Println("Export started")
-	now := time.Now()
-	if since == nil {
-		yStart := time.Date(now.Year(), 0, 0, 0, 0, 0, 0, now.Location())
-		since = &yStart
-	}
-
-	exportData := ExportData{}
-
-	acs, err := c.ots.GetActivities(*since, now, pkg.Employee{})
-	if err != nil {
-		return err
-	}
-	exportData.Activities = acs
-
-	hds, err := c.ots.GetHolidays(*since, now, pkg.Employee{})
-	if err != nil {
-		return err
-	}
-	exportData.Holidays = hds
-
-	wds, err := c.ots.GetWorkDays(*since, now, pkg.Employee{})
-	if err != nil {
-		return err
-	}
-	exportData.Holidays = wds
-
-	bytes, err := json.MarshalIndent(&exportData, "", " ")
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(output, bytes, os.ModeAppend)
-	if err != nil {
-		return err
-	}
-	fmt.Println("Export finished")
-	return nil
-}
-
-func (c *Client) Import(input string) error {
-	fmt.Println("Import started")
-	bytes, err := os.ReadFile(input)
-	if err != nil {
-		return err
-	}
-
-	exportData := ExportData{}
-	err = json.Unmarshal(bytes, &exportData)
-	if err != nil {
-		return err
-	}
-
-	for _, a := range exportData.Activities {
-		_, err := c.ots.AddActivity(a, pkg.Employee{})
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, h := range exportData.Holidays {
-		_, err := c.ots.AddHoliday(h, pkg.Employee{})
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, h := range exportData.WorkDays {
-		_, err := c.ots.AddWorkDay(h, pkg.Employee{})
-		if err != nil {
-			return err
-		}
-	}
-
-	fmt.Println("Import finished")
 	return nil
 }
