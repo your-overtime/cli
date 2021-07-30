@@ -104,10 +104,13 @@ func main() {
 					return errors.New("No conf loaded")
 				},
 				Flags: []cli.Flag{
-					// &cli.TimestampFlag{
-					// 	Name:    "since",
-					// 	Aliases: []string{"s"},
-					// },
+					&cli.TimestampFlag{
+						Name:        "since",
+						Aliases:     []string{"s"},
+						DefaultText: "now -1 Year",
+						Layout:      "2006-01-02",
+						Required:    false,
+					},
 					&cli.StringFlag{
 						Name:     "output",
 						Required: true,
@@ -115,7 +118,8 @@ func main() {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					return otc.Export(nil, c.String("output"))
+					s := fixLocation(c.Timestamp("since"))
+					return otc.Export(s, c.String("output"))
 				},
 			},
 			{
@@ -132,10 +136,6 @@ func main() {
 					return errors.New("No conf loaded")
 				},
 				Flags: []cli.Flag{
-					// &cli.TimestampFlag{
-					// 	Name:    "since",
-					// 	Aliases: []string{"s"},
-					// },
 					&cli.StringFlag{
 						Name:     "input",
 						Required: true,
