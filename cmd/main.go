@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/your-overtime/cli/internal/client"
-	"github.com/your-overtime/cli/internal/conf"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"github.com/your-overtime/cli/internal/client"
+	"github.com/your-overtime/cli/internal/conf"
 )
 
 var (
@@ -88,6 +88,62 @@ func main() {
 							return client.InitConf()
 						},
 					},
+				},
+			},
+			{
+				Name:  "export",
+				Usage: "export all data since given start (default the last year)",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Flags: []cli.Flag{
+					&cli.TimestampFlag{
+						Name:        "since",
+						Aliases:     []string{"s"},
+						DefaultText: "now -1 Year",
+						Layout:      "2006-01-02",
+						Required:    false,
+					},
+					&cli.StringFlag{
+						Name:     "output",
+						Required: true,
+						Aliases:  []string{"o"},
+					},
+				},
+				Action: func(c *cli.Context) error {
+					s := fixLocation(c.Timestamp("since"))
+					return otc.Export(s, c.String("output"))
+				},
+			},
+			{
+				Name:  "import",
+				Usage: "import all data",
+				Before: func(c *cli.Context) error {
+					err := createState()
+					if err == nil {
+						c := client.Init(config.Host, config.Token)
+						otc = &c
+						return nil
+					}
+					os.Exit(1)
+					return errors.New("No conf loaded")
+				},
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "input",
+						Required: true,
+						Aliases:  []string{"i"},
+					},
+				},
+				Action: func(c *cli.Context) error {
+					return otc.Import(c.String("input"))
 				},
 			},
 			{

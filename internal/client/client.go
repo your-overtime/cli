@@ -12,8 +12,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/cli/internal/utils"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/cli/internal/utils"
 )
 
 type Client struct {
@@ -229,7 +229,7 @@ func (c *Client) StartActivity(desc string) error {
 	if err != nil {
 		log.Debug(err)
 		fmt.Println("\nA activity is currently running")
-		o, err := c.ots.CalcOverview(pkg.Employee{})
+		o, err := c.ots.CalcOverview(pkg.Employee{}, time.Now())
 		if err != nil {
 			log.Debug(err)
 			return err
@@ -335,7 +335,7 @@ func formatMinutesToHoursAndMinutes(t int64) string {
 }
 
 func (c *Client) CalcCurrentOverview() error {
-	o, err := c.ots.CalcOverview(pkg.Employee{})
+	o, err := c.ots.CalcOverview(pkg.Employee{}, time.Now())
 	if err != nil {
 		log.Debug(err)
 		return err
@@ -369,9 +369,9 @@ func (c *Client) CalcCurrentOverview() error {
 
 func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHoliday bool) error {
 	h, err := c.ots.AddHoliday(pkg.Holiday{
-		Start:         start,
-		End:           end,
-		Description:   desc,
+		Start:        start,
+		End:          end,
+		Description:  desc,
 		LegalHoliday: legalHoliday,
 	}, pkg.Employee{})
 
