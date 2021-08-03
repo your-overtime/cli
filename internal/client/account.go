@@ -169,7 +169,7 @@ func (c *Client) GetAccount() error {
 	fmt.Fprintf(w, "Surname\t: %s\n", em.Surname)
 	fmt.Fprintf(w, "Name\t: %s\n", em.Name)
 	fmt.Fprintf(w, "Login\t: %s\n", em.Login)
-	fmt.Fprintf(w, "WorkingDays\t: %s\n", em.WorkingDays)
+	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", em.NumWorkingDays)
 	fmt.Fprintf(w, "WeekWorkingTime\t: %s\n", formatMinutesToHoursAndMinutes(int64(em.WeekWorkingTimeInMinutes)))
 
 	w.Flush()
