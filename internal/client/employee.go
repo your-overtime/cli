@@ -9,7 +9,7 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (c *Client) AddEmployee(name string, surname string, login string, pw string, wwt uint, adminToken string) error {
+func (c *Client) AddEmployee(name string, surname string, login string, pw string, wwt uint, nwwd uint, adminToken string) error {
 	e, err := c.ots.SaveEmployee(pkg.Employee{
 		User: &pkg.User{
 			Name:     name,
@@ -18,6 +18,7 @@ func (c *Client) AddEmployee(name string, surname string, login string, pw strin
 			Password: pw,
 		},
 		WeekWorkingTimeInMinutes: wwt,
+		NumWorkingDays:           nwwd,
 	}, adminToken)
 	if err != nil {
 		return err
@@ -29,6 +30,7 @@ func (c *Client) AddEmployee(name string, surname string, login string, pw strin
 	fmt.Fprintf(w, "Name\t: %s\n", e.Name)
 	fmt.Fprintf(w, "Surname\t: %s\n", e.Surname)
 	fmt.Fprintf(w, "WeekWorkingTimeInMinutes\t: %d\n", e.WeekWorkingTimeInMinutes)
+	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", e.NumWorkingDays)
 	w.Flush()
 
 	return nil

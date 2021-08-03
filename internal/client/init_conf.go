@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/your-overtime/cli/internal/conf"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/your-overtime/cli/internal/conf"
 )
 
 func basicAuth(login string, password string) string {
@@ -131,6 +131,13 @@ func InitConf() error {
 						return nil
 					},
 				},
+				{
+					Name: "numberWorkingDays",
+					Prompt: &survey.Input{
+						Message: "Please type your number of working days per week",
+					},
+					Validate: survey.Required,
+				},
 			}
 			answers3 := struct {
 				Name                     string
@@ -138,6 +145,7 @@ func InitConf() error {
 				Login                    string
 				Password                 string
 				WeekWorkingTimeInMinutes string
+				NumWorkingDays           uint
 			}{}
 			err := survey.Ask(qs, &answers3)
 			if err != nil {
@@ -150,7 +158,7 @@ func InitConf() error {
 				return err
 			}
 			c := Init(url, fmt.Sprintf("token %s", adminToken))
-			err = c.AddEmployee(answers3.Name, answers3.Surname, answers3.Login, answers3.Password, wwtim, adminToken)
+			err = c.AddEmployee(answers3.Name, answers3.Surname, answers3.Login, answers3.Password, wwtim, answers3.NumWorkingDays, adminToken)
 			if err != nil {
 				return err
 			}

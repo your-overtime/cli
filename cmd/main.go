@@ -173,7 +173,7 @@ func main() {
 			{
 				Name:    "account",
 				Aliases: []string{"ac"},
-				Usage:   "change user information",
+				Usage:   "update user information",
 				Before: func(c *cli.Context) error {
 					err := createState()
 					if err == nil {
@@ -186,9 +186,9 @@ func main() {
 				},
 				Subcommands: []*cli.Command{
 					{
-						Name:    "change",
-						Aliases: []string{"c"},
-						Usage:   "Change account values",
+						Name:    "update",
+						Aliases: []string{"u"},
+						Usage:   "Update account values",
 						Flags: []cli.Flag{
 							&cli.BoolFlag{
 								Name:    "name",
@@ -215,12 +215,12 @@ func main() {
 								Usage: "change week working time",
 							},
 							&cli.BoolFlag{
-								Name:  "wwd",
-								Usage: "change week working day",
+								Name:  "nwwd",
+								Usage: "change number of week working days",
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("wwd"))
+							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"))
 						},
 					},
 					{
@@ -272,7 +272,7 @@ func main() {
 					},
 					{
 						Name:    "delete",
-						Aliases: []string{"c"},
+						Aliases: []string{"d"},
 						Usage:   "deletes a token",
 						Flags: []cli.Flag{
 							&cli.UintFlag{
@@ -336,8 +336,8 @@ func main() {
 						},
 					},
 					{
-						Name:    "activities",
-						Aliases: []string{"a"},
+						Name:    "get",
+						Aliases: []string{"g"},
 						Usage:   "fetch activities between start and end",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
@@ -464,8 +464,8 @@ func main() {
 				},
 				Subcommands: []*cli.Command{
 					{
-						Name:    "holidays",
-						Aliases: []string{"h"},
+						Name:    "get",
+						Aliases: []string{"g"},
 						Usage:   "fetch holidays between start and end",
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
@@ -610,7 +610,7 @@ func main() {
 						Usage:   "creates a new employee",
 						Flags: []cli.Flag{
 							&cli.UintFlag{
-								Name:     "WeekWorkingTimeInMinutes",
+								Name:     "weekWorkingTimeInMinutes",
 								Aliases:  []string{"wwtim"},
 								Required: true,
 							},
@@ -634,9 +634,14 @@ func main() {
 								Aliases:  []string{"p"},
 								Required: true,
 							},
+							&cli.UintFlag{
+								Name:     "numberOfWeekWorkingDays",
+								Aliases:  []string{"nwwd"},
+								Required: true,
+							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.AddEmployee(c.String("name"), c.String("surname"), c.String("login"), c.String("password"), c.Uint("WeekWorkingTimeInMinutes"), c.String("adminToken"))
+							return otc.AddEmployee(c.String("name"), c.String("surname"), c.String("login"), c.String("password"), c.Uint("weekWorkingTimeInMinutes"), c.Uint("numberOfWeekWorkingDays"), c.String("adminToken"))
 						},
 					},
 					{
