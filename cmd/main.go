@@ -220,7 +220,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"))
+							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"), c.Args().First())
 						},
 					},
 					{
