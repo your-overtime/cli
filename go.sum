@@ -68,6 +68,8 @@ github.com/your-overtime/api v1.1.6-0.20210723170540-dbc0a8ec5149 h1:a+1+b8956Yt
 github.com/your-overtime/api v1.1.6-0.20210723170540-dbc0a8ec5149/go.mod h1:Any066g+WMWa5Tu5F1dnhPoRbURSVHIQT+mVAT5x6SI=
 github.com/your-overtime/api v1.2.0 h1:QEAa6WXXgAgNreB0+6yYNhJHxTaIjgJ7GM5faY18h4w=
 github.com/your-overtime/api v1.2.0/go.mod h1:Any066g+WMWa5Tu5F1dnhPoRbURSVHIQT+mVAT5x6SI=
+github.com/your-overtime/api v1.3.0 h1:RqPv2gPYMY1WuTBTX4SAh/2SyAAg4Qz3PpXBKgFwKFE=
+github.com/your-overtime/api v1.3.0/go.mod h1:Any066g+WMWa5Tu5F1dnhPoRbURSVHIQT+mVAT5x6SI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20190530122614-20be4c3c3ed5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 h1:It14KIkyBFYkHkwZ7k45minvA9aorojkyjGk9KJ5B/w=

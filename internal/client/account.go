@@ -3,11 +3,11 @@ package client
 import (
 	"fmt"
 	"os"
-	"strings"
+	"strconv"
 	"text/tabwriter"
 
-	"github.com/your-overtime/api/pkg"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/your-overtime/api/pkg"
 )
 
 func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool) error {
@@ -59,17 +59,20 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 	if all || cwwd {
 		updateValue := false
 		prompt1 := &survey.Confirm{
-			Message: fmt.Sprintf("Week working days: %s change?", e.WorkingDays),
+			Message: fmt.Sprintf("Number of working days per week: %d change?", e.NumWorkingDays),
 		}
 		survey.AskOne(prompt1, &updateValue)
 		if updateValue {
-			days := []string{}
-			prompt2 := &survey.MultiSelect{
-				Message: "What days do you prefer:",
-				Options: []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+			numDays := ""
+			prompt2 := &survey.Select{
+				Message: "Number of working days per week:",
+				Options: []string{"1", "2", "3", "4", "5", "6", "7"},
 			}
-			survey.AskOne(prompt2, &days)
-			fields["WorkingDays"] = strings.Join(days, ",")
+			survey.AskOne(prompt2, &numDays)
+			fields["NumWorkingDays"], err = strconv.Atoi(numDays)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -91,7 +94,7 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 	fmt.Fprintf(w, "Surname\t: %s\n", em.Surname)
 	fmt.Fprintf(w, "Name\t: %s\n", em.Name)
 	fmt.Fprintf(w, "Login\t: %s\n", em.Login)
-	fmt.Fprintf(w, "WorkingDays\t: %s\n", em.WorkingDays)
+	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", em.NumWorkingDays)
 	fmt.Fprintf(w, "WeekWorkingTime\t: %s\n", formatMinutesToHoursAndMinutes(int64(em.WeekWorkingTimeInMinutes)))
 
 	w.Flush()
@@ -166,7 +169,7 @@ func (c *Client) GetAccount() error {
 	fmt.Fprintf(w, "Surname\t: %s\n", em.Surname)
 	fmt.Fprintf(w, "Name\t: %s\n", em.Name)
 	fmt.Fprintf(w, "Login\t: %s\n", em.Login)
-	fmt.Fprintf(w, "WorkingDays\t: %s\n", em.WorkingDays)
+	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", em.NumWorkingDays)
 	fmt.Fprintf(w, "WeekWorkingTime\t: %s\n", formatMinutesToHoursAndMinutes(int64(em.WeekWorkingTimeInMinutes)))
 
 	w.Flush()
