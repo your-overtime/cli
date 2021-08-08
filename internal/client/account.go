@@ -10,7 +10,7 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool) error {
+func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool, value string) error {
 	e, err := c.ots.GetAccount()
 	if err != nil {
 		return err
@@ -20,16 +20,21 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 
 	fields := map[string]interface{}{}
 
+	if all {
+		// do not update if no specific field is selected
+		value = ""
+	}
+
 	if all || cn {
-		updateStringValue(fields, fmt.Sprintf("Name: %s", e.Name), "Please type the new name", "Name")
+		updateStringValue(fields, fmt.Sprintf("Name: %s", e.Name), "Please type the new name", "Name", value)
 	}
 
 	if all || cs {
-		updateStringValue(fields, fmt.Sprintf("Surname: %s", e.Surname), "Please type the new surname", "Surname")
+		updateStringValue(fields, fmt.Sprintf("Surname: %s", e.Surname), "Please type the new surname", "Surname", value)
 	}
 
 	if all || cl {
-		updateStringValue(fields, fmt.Sprintf("Login: %s", e.Login), "Please type the new login", "Login")
+		updateStringValue(fields, fmt.Sprintf("Login: %s", e.Login), "Please type the new login", "Login", value)
 	}
 
 	if all || cp {
@@ -37,42 +42,14 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 	}
 
 	if all || cwwt {
-		updateValue := false
-		prompt := &survey.Confirm{
-			Message: fmt.Sprintf("Week working time: %s change?", formatMinutesToHoursAndMinutes(int64(e.WeekWorkingTimeInMinutes))),
-		}
-		survey.AskOne(prompt, &updateValue)
-		if updateValue {
-			value := ""
-			prompt := &survey.Input{
-				Message: "Please type your working time per week [32h:30m]",
-			}
-			survey.AskOne(prompt, &value)
-			v, err := ConvertWWTStrToMins(value)
-			if err != nil {
-				return err
-			}
-			fields["WeekWorkingTimeInMinutes"] = v
+		if err := updateWeekWorkingTime(fields, e.WeekWorkingTimeInMinutes, value); err != nil {
+			return err
 		}
 	}
 
 	if all || cwwd {
-		updateValue := false
-		prompt1 := &survey.Confirm{
-			Message: fmt.Sprintf("Number of working days per week: %d change?", e.NumWorkingDays),
-		}
-		survey.AskOne(prompt1, &updateValue)
-		if updateValue {
-			numDays := ""
-			prompt2 := &survey.Select{
-				Message: "Number of working days per week:",
-				Options: []string{"1", "2", "3", "4", "5", "6", "7"},
-			}
-			survey.AskOne(prompt2, &numDays)
-			fields["NumWorkingDays"], err = strconv.Atoi(numDays)
-			if err != nil {
-				return err
-			}
+		if err := updateNumberOfWorkingDaysPerWeek(fields, e.NumWorkingDays, value); err != nil {
+			return err
 		}
 	}
 
@@ -142,7 +119,11 @@ func changePassword(fields map[string]interface{}) {
 	}
 }
 
-func updateStringValue(fields map[string]interface{}, currentFieldValue string, msg string, fieldName string) {
+func updateStringValue(fields map[string]interface{}, currentFieldValue string, msg string, fieldName string, newValue string) {
+	if len(newValue) > 0 {
+		fields[fieldName] = newValue
+		return
+	}
 	updateValue := false
 	prompt := &survey.Confirm{
 		Message: fmt.Sprintf("%s change?", currentFieldValue),
@@ -156,6 +137,63 @@ func updateStringValue(fields map[string]interface{}, currentFieldValue string, 
 		survey.AskOne(prompt, &value)
 		fields[fieldName] = value
 	}
+}
+
+func updateWeekWorkingTime(fields map[string]interface{}, currentFieldValue uint, newValue string) error {
+	if len(newValue) > 0 {
+		v, err := ConvertWWTStrToMins(newValue)
+		if err == nil {
+			fields["WeekWorkingTimeInMinutes"] = v
+			return nil
+		}
+		// resume with wizard if input couldn't be parsed
+	}
+	updateValue := false
+	prompt := &survey.Confirm{
+		Message: fmt.Sprintf("Week working time: %s change?", formatMinutesToHoursAndMinutes(int64(currentFieldValue))),
+	}
+	survey.AskOne(prompt, &updateValue)
+	if updateValue {
+		value := ""
+		prompt := &survey.Input{
+			Message: "Please type your working time per week [32h:30m]",
+		}
+		survey.AskOne(prompt, &value)
+		v, err := ConvertWWTStrToMins(value)
+		if err != nil {
+			return err
+		}
+		fields["WeekWorkingTimeInMinutes"] = v
+	}
+	return nil
+}
+
+func updateNumberOfWorkingDaysPerWeek(fields map[string]interface{}, currentValue uint, newValue string) (err error) {
+	if len(newValue) > 0 {
+		fields["NumWorkingDays"], err = strconv.Atoi(newValue)
+		if err == nil {
+			return
+		}
+		// continue with wizard if an error occurred
+	}
+	updateValue := false
+	prompt1 := &survey.Confirm{
+		Message: fmt.Sprintf("Number of working days per week: %d change?", currentValue),
+	}
+	survey.AskOne(prompt1, &updateValue)
+	if updateValue {
+		numDays := ""
+		prompt2 := &survey.Select{
+			Message: "Number of working days per week:",
+			Options: []string{"1", "2", "3", "4", "5", "6", "7"},
+		}
+		survey.AskOne(prompt2, &numDays)
+		fields["NumWorkingDays"], err = strconv.Atoi(numDays)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *Client) GetAccount() error {
