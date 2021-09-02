@@ -12,12 +12,19 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHoliday bool) error {
+func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHoliday bool, sick bool) error {
+	hType := pkg.HolidayTypeFree
+	if legalHoliday {
+		hType = pkg.HolidayTypeLegalHoliday
+	} else if sick {
+		hType = pkg.HolidayTypeSick
+	}
+
 	h, err := c.ots.AddHoliday(pkg.Holiday{
-		Start:        start,
-		End:          end,
-		Description:  desc,
-		LegalHoliday: legalHoliday,
+		Start:       start,
+		End:         end,
+		Description: desc,
+		Type:        hType,
 	}, pkg.Employee{})
 
 	if err != nil {
@@ -60,15 +67,21 @@ func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error 
 	return nil
 }
 
-func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday *bool) error {
+func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday bool, sick bool) error {
 	ch, err := c.ots.GetHoliday(id, pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
-	if legalHoliday != nil {
-		ch.LegalHoliday = *legalHoliday
+
+	if legalHoliday {
+		ch.Type = pkg.HolidayTypeLegalHoliday
+	} else if sick {
+		ch.Type = pkg.HolidayTypeSick
+	} else {
+		ch.Type = pkg.HolidayTypeFree
 	}
+
 	if len(desc) > 0 {
 		ch.Description = desc
 	}
