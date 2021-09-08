@@ -28,19 +28,19 @@ jobs:
       env:
         GOOS: "linux"
         GOARCH: "amd64"
-      run: go build -o build/overtime_linux cmd/main.go
+      run: go build -o build/otcli_linux cmd/main.go
     
     - name: Build Mac
       env:
         GOOS: "darwin"
         GOARCH: "amd64"
-      run: go build -o build/overtime_darwin cmd/main.go
+      run: go build -o build/otcli_darwin cmd/main.go
 
     - name: Build Windows
       env:
         GOOS: "windows"
         GOARCH: "amd64"
-      run: go build -o build/overtime_windows.exe cmd/main.go
+      run: go build -o build/otcli_windows.exe cmd/main.go
 
     - name: Release
       uses: softprops/action-gh-release@v1
