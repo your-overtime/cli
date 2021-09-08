@@ -306,8 +306,7 @@ func main() {
 						Aliases: []string{"s"},
 						Flags: []cli.Flag{
 							&cli.StringFlag{
-								Name:  "description",
-								Value: "",
+								Name: "description",
 							},
 						},
 						Usage: "starts new activity",
@@ -342,12 +341,14 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
+								Aliases:     []string{"s"},
 								Value:       cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())),
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02",
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
+								Aliases:     []string{"e"},
 								Value:       cli.NewTimestamp(time.Now()),
 								DefaultText: "now",
 								Layout:      "2006-01-02",
@@ -367,12 +368,14 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
+								Aliases:     []string{"s"},
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02 15:04",
 								Required:    true,
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
+								Aliases:     []string{"e"},
 								DefaultText: "now",
 								Layout:      "2006-01-02 15:04",
 								Required:    true,
@@ -396,11 +399,13 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
+								Aliases:     []string{"s"},
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02 15:04",
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
+								Aliases:     []string{"e"},
 								DefaultText: "now",
 								Layout:      "2006-01-02 15:04",
 							},
@@ -470,12 +475,14 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
+								Aliases:     []string{"s"},
 								Value:       cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())),
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02",
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
+								Aliases:     []string{"e"},
 								Value:       cli.NewTimestamp(time.Now()),
 								DefaultText: "now",
 								Layout:      "2006-01-02",
@@ -512,6 +519,12 @@ func main() {
 							&cli.BoolFlag{
 								Name:    "legalholiday",
 								Aliases: []string{"l"},
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "sick",
+								Aliases: []string{"si"},
+								Value:   false,
 							},
 						},
 						Action: func(c *cli.Context) error {
@@ -521,7 +534,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.AddHoliday(c.String("description"), *s, *e, c.Bool("legalholiday"))
+							return otc.AddHoliday(c.String("description"), *s, *e, c.Bool("legalholiday"), c.Bool("sick"))
 						},
 					},
 					{
@@ -531,11 +544,13 @@ func main() {
 						Flags: []cli.Flag{
 							&cli.TimestampFlag{
 								Name:        "start",
+								Aliases:     []string{"s"},
 								DefaultText: "now -1 day",
 								Layout:      "2006-01-02 15:04",
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
+								Aliases:     []string{"e"},
 								DefaultText: "now",
 								Layout:      "2006-01-02 15:04",
 							}, &cli.StringFlag{
@@ -549,6 +564,12 @@ func main() {
 							&cli.BoolFlag{
 								Name:    "legalholiday",
 								Aliases: []string{"l"},
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "sick",
+								Aliases: []string{"si"},
+								Value:   false,
 							},
 						},
 						Action: func(c *cli.Context) error {
@@ -558,12 +579,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							var legalHoliday *bool
-							if c.IsSet("legalholiday") {
-								t := c.Bool("legalholiday")
-								legalHoliday = &t
-							}
-							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), legalHoliday)
+							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), c.Bool("legalholiday"), c.Bool("sick"))
 						},
 					},
 					{

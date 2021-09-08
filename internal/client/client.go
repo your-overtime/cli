@@ -33,6 +33,7 @@ func printActivity(w *tabwriter.Writer, a *pkg.Activity) {
 func printHoliday(w *tabwriter.Writer, a *pkg.Holiday) {
 	fmt.Fprintf(w, "ID\t: %d\n", a.ID)
 	fmt.Fprintf(w, "Description\t: %s\n", a.Description)
+	fmt.Fprintf(w, "Type\t: %s\n", a.Type)
 	fmt.Fprintf(w, "Start\t: %s\n", utils.FormatTime(a.Start))
 	fmt.Fprintf(w, "End\t: %s\n", utils.FormatTime(a.End))
 	diff := a.End.Sub(a.Start)
