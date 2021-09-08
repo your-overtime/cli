@@ -1,0 +1,37 @@
+name: Go
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+    
+    - name: Test
+      run: go test -v ./...
+
+    - name: Build Linux
+      run: GOPRIVATE=github.com GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_linux cmd/main.go
+    
+    - name: Build Mac
+      run: GOPRIVATE=github.com GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_darwin cmd/main.go
+
+    - name: Build Windows
+      run: GOPRIVATE=github.com GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_windows.exe cmd/main.go
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          build/overtime_linux
+          build/overtime_darwin
+          build/overtime_windows.exe
