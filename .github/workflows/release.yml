@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+env:
+  GOPRIVATE: "github.com"
+  CGO_ENABLED: "0"
+
 jobs:
   build:
     runs-on: self-hosted
@@ -15,17 +19,28 @@ jobs:
       with:
         go-version: 1.16
     
-    - name: Test
-      run: go test -v ./...
+    - name: Configure git for private modules
+      env:
+        TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      run: git config --global url."https://jasperem:${TOKEN}@github.com".insteadOf "https://github.com"
 
     - name: Build Linux
-      run: GOPRIVATE=github.com GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_linux cmd/main.go
+      env:
+        GOOS: "linux"
+        GOARCH: "amd64"
+      run: go build -o build/overtime_linux cmd/main.go
     
     - name: Build Mac
-      run: GOPRIVATE=github.com GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_darwin cmd/main.go
+      env:
+        GOOS: "darwin"
+        GOARCH: "amd64"
+      run: go build -o build/overtime_darwin cmd/main.go
 
     - name: Build Windows
-      run: GOPRIVATE=github.com GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o build/overtime_windows.exe cmd/main.go
+      env:
+        GOOS: "windows"
+        GOARCH: "amd64"
+      run: go build -o build/overtime_windows.exe cmd/main.go
 
     - name: Release
       uses: softprops/action-gh-release@v1
