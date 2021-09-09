@@ -47,6 +47,6 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build/overtime_linux
-          build/overtime_darwin
-          build/overtime_windows.exe
+          build/otcli_linux
+          build/otcli_darwin
+          build/otcli_windows.exe
