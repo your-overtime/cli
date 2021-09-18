@@ -67,19 +67,21 @@ func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error 
 	return nil
 }
 
-func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday bool, sick bool) error {
+func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday bool, sick bool, free bool) error {
 	ch, err := c.ots.GetHoliday(id, pkg.Employee{})
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 
-	if legalHoliday {
-		ch.Type = pkg.HolidayTypeLegalHoliday
-	} else if sick {
-		ch.Type = pkg.HolidayTypeSick
-	} else {
-		ch.Type = pkg.HolidayTypeFree
+	if legalHoliday || sick || free {
+		if legalHoliday {
+			ch.Type = pkg.HolidayTypeLegalHoliday
+		} else if sick {
+			ch.Type = pkg.HolidayTypeSick
+		} else {
+			ch.Type = pkg.HolidayTypeFree
+		}
 	}
 
 	if len(desc) > 0 {
