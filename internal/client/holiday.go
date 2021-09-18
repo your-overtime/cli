@@ -74,14 +74,12 @@ func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id
 		return err
 	}
 
-	if legalHoliday || sick || free {
-		if legalHoliday {
-			ch.Type = pkg.HolidayTypeLegalHoliday
-		} else if sick {
-			ch.Type = pkg.HolidayTypeSick
-		} else {
-			ch.Type = pkg.HolidayTypeFree
-		}
+	if legalHoliday {
+		ch.Type = pkg.HolidayTypeLegalHoliday
+	} else if sick {
+		ch.Type = pkg.HolidayTypeSick
+	} else if free {
+		ch.Type = pkg.HolidayTypeFree
 	}
 
 	if len(desc) > 0 {
