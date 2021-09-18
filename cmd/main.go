@@ -546,16 +546,16 @@ func main() {
 								Name:        "start",
 								Aliases:     []string{"s"},
 								DefaultText: "now -1 day",
-								Layout:      "2006-01-02 15:04",
+								Layout:      "2006-01-02",
 							},
 							&cli.TimestampFlag{
 								Name:        "end",
 								Aliases:     []string{"e"},
 								DefaultText: "now",
-								Layout:      "2006-01-02 15:04",
+								Layout:      "2006-01-02",
 							}, &cli.StringFlag{
-								Name:  "description",
-								Value: "",
+								Name:    "description",
+								Aliases: []string{"d"},
 							},
 							&cli.UintFlag{
 								Name:     "id",
@@ -571,6 +571,11 @@ func main() {
 								Aliases: []string{"si"},
 								Value:   false,
 							},
+							&cli.BoolFlag{
+								Name:    "free",
+								Aliases: []string{"f"},
+								Value:   false,
+							},
 						},
 						Action: func(c *cli.Context) error {
 							e := fixLocation(c.Timestamp("end"))
@@ -579,7 +584,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), c.Bool("legalholiday"), c.Bool("sick"))
+							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), c.Bool("legalholiday"), c.Bool("sick"), c.Bool("free"))
 						},
 					},
 					{
