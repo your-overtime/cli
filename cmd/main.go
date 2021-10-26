@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/AlecAivazis/survey/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"github.com/your-overtime/cli/internal/client"
@@ -310,12 +312,33 @@ func main() {
 							},
 						},
 						Usage: "starts new activity",
-						Action: func(c *cli.Context) error {
-							desc := c.String("description")
-							if len(desc) == 0 {
-								desc = config.DefaultActivityDesc
+						Before: func(c *cli.Context) error {
+							if !c.IsSet("description") {
+								if c.NArg() > 0 {
+									c.Set("description", strings.Join(c.Args().Slice(), " "))
+									return nil
+								}
+								if len(config.DefaultActivityDesc) > 0 {
+									c.Set("description", config.DefaultActivityDesc)
+									return nil
+								}
+								var desc string
+								err := survey.AskOne(&survey.Input{
+									Message: "Description",
+								}, &desc)
+								if err != nil {
+									return err
+								}
+								if len(desc) > 0 {
+									c.Set("description", desc)
+									return nil
+								}
 							}
-							return otc.StartActivity(desc)
+							return errors.New("description missing")
+						},
+						Action: func(c *cli.Context) error {
+
+							return otc.StartActivity(c.String("description"))
 						},
 					},
 					{
