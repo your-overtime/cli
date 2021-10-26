@@ -25,6 +25,6 @@ func PrintJson(v interface{}) error {
 	if err != nil {
 		return err
 	}
-	println(string(data))
+	fmt.Printf("%s\n", data)
 	return nil
 }

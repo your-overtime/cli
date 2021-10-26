@@ -4,13 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/AlecAivazis/survey/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"github.com/your-overtime/cli/internal/client"
 	"github.com/your-overtime/cli/internal/conf"
 	"github.com/your-overtime/cli/internal/out"
+	"github.com/your-overtime/cli/internal/utils"
 )
 
 var (
@@ -310,14 +313,49 @@ func main() {
 								Name:    "description",
 								Aliases: []string{"d"},
 							},
+							&cli.BoolFlag{
+								Name:    "resume",
+								Aliases: []string{"r"},
+							},
 						},
 						Usage: "starts new activity",
-						Action: func(c *cli.Context) error {
-							desc := c.String("description")
-							if len(desc) == 0 {
-								desc = config.DefaultActivityDesc
+						Before: func(c *cli.Context) error {
+							descKey := "description"
+
+							if c.Bool("resume") {
+								end := utils.Today().AddDate(0, 0, 1) // TODO nicer way to handle start and end dates?
+								start := utils.PreviousWorkday(end)
+								activities, err := otc.GetActivities(start, end)
+								if err != nil {
+									return err
+								}
+								descriptions := utils.UniqueStrings(len(activities), func(i int) string {
+									return activities[i].Description
+								})
+								var answer int
+								err = survey.AskOne(&survey.Select{
+									Message: "Activity",
+									Options: descriptions,
+								}, &answer)
+								if err != nil {
+									return err
+								}
+								return c.Set(descKey, descriptions[answer])
+
 							}
-							a, err := otc.StartActivity(desc)
+							if !c.IsSet(descKey) {
+								if c.NArg() > 0 {
+									return c.Set(descKey, strings.Join(c.Args().Slice(), " "))
+								}
+								if len(config.DefaultActivityDesc) > 0 {
+									return c.Set(descKey, config.DefaultActivityDesc)
+								}
+
+							}
+							return nil
+						},
+						Action: func(c *cli.Context) error {
+							a, err := otc.StartActivity(c.String("description"))
 							if err != nil {
 								if client.IsConflictErr(err) {
 									fmt.Println("\nA activity is currently running")
