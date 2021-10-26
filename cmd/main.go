@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"github.com/your-overtime/cli/internal/client"
 	"github.com/your-overtime/cli/internal/conf"
+	"github.com/your-overtime/cli/internal/out"
 )
 
 var (
@@ -306,7 +307,8 @@ func main() {
 						Aliases: []string{"s"},
 						Flags: []cli.Flag{
 							&cli.StringFlag{
-								Name: "description",
+								Name:    "description",
+								Aliases: []string{"d"},
 							},
 						},
 						Usage: "starts new activity",
@@ -315,7 +317,17 @@ func main() {
 							if len(desc) == 0 {
 								desc = config.DefaultActivityDesc
 							}
-							return otc.StartActivity(desc)
+							a, err := otc.StartActivity(desc)
+							if err != nil {
+								if client.IsConflictErr(err) {
+									fmt.Println("\nA activity is currently running")
+									return otc.CalcCurrentOverview()
+								}
+								return err
+							}
+							out.PrintActivity(a)
+							return nil
+
 						},
 					},
 					{
@@ -323,7 +335,16 @@ func main() {
 						Aliases: []string{"e"},
 						Usage:   "end currently running activity",
 						Action: func(c *cli.Context) error {
-							return otc.StopActivity()
+							a, err := otc.StopActivity()
+							if err != nil {
+								if client.IsNoActivityRunningErr(err) {
+									fmt.Println("No activity is running")
+									return nil
+								}
+								return err
+							}
+							out.PrintActivity(a)
+							return nil
 						},
 					},
 					{
@@ -358,7 +379,15 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.GetActivities(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
+							activities, err := otc.GetActivities(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")))
+							if err != nil {
+								return err
+							}
+							if c.Bool("json") {
+								return out.PrintJson(activities)
+							}
+							out.PrintActivities(activities)
+							return nil
 						},
 					},
 					{
@@ -380,8 +409,9 @@ func main() {
 								Layout:      "2006-01-02 15:04",
 								Required:    true,
 							}, &cli.StringFlag{
-								Name:  "description",
-								Value: "",
+								Name:    "description",
+								Aliases: []string{"d"},
+								Value:   "",
 							},
 						},
 						Action: func(c *cli.Context) error {
@@ -389,7 +419,12 @@ func main() {
 							if len(desc) == 0 {
 								desc = config.DefaultActivityDesc
 							}
-							return otc.AddActivity(desc, fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")))
+							a, err := otc.AddActivity(desc, fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")))
+							if err != nil {
+								return err
+							}
+							out.PrintActivity(a)
+							return nil
 						},
 					},
 					{
@@ -420,7 +455,12 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.UpdateActivity(c.String("desc"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
+							a, err := otc.UpdateActivity(c.String("desc"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
+							if err != nil {
+								return err
+							}
+							out.PrintActivity(a)
+							return nil
 						},
 					},
 					{
@@ -434,7 +474,12 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.DeleteActivity(c.Uint("id"))
+							err := otc.DeleteActivity(c.Uint("id"))
+							if err != nil {
+								return err
+							}
+							fmt.Println("Activity deleted")
+							return nil
 						},
 					},
 					{
