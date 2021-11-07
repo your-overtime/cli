@@ -223,9 +223,13 @@ func main() {
 								Name:  "nwwd",
 								Usage: "change number of week working days",
 							},
+							&cli.BoolFlag{
+								Name:  "nhd",
+								Usage: "change number of holidays",
+							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"), c.Args().First())
+							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"), c.Bool("nhd"), c.Args().First())
 						},
 					},
 					{
