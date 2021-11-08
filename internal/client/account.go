@@ -10,13 +10,13 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool, value string) error {
+func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cwwd bool, nhd bool, value string) error {
 	e, err := c.ots.GetAccount()
 	if err != nil {
 		return err
 	}
 
-	all := !(cn || cs || cl || cp || cwwt || cwwd)
+	all := !(cn || cs || cl || cp || cwwt || cwwd || nhd)
 
 	fields := map[string]interface{}{}
 
@@ -53,6 +53,11 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 		}
 	}
 
+	if all || nhd {
+		uintValue := uint(0)
+		updateUintValue(fields, fmt.Sprintf("NumHolidays: %d", e.NumHolidays), "Please type the new number of holidays per year", "NumHolidays", uintValue)
+	}
+
 	em, err := c.ots.UpdateAccount(fields, pkg.Employee{})
 	if err != nil {
 		if err.Error() == "400 Bad Request" {
@@ -72,6 +77,7 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 	fmt.Fprintf(w, "Name\t: %s\n", em.Name)
 	fmt.Fprintf(w, "Login\t: %s\n", em.Login)
 	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", em.NumWorkingDays)
+	fmt.Fprintf(w, "NumHolidays\t: %d\n", em.NumHolidays)
 	fmt.Fprintf(w, "WeekWorkingTime\t: %s\n", formatMinutesToHoursAndMinutes(int64(em.WeekWorkingTimeInMinutes)))
 
 	w.Flush()
@@ -131,6 +137,26 @@ func updateStringValue(fields map[string]interface{}, currentFieldValue string, 
 	survey.AskOne(prompt, &updateValue)
 	if updateValue {
 		value := ""
+		prompt := &survey.Input{
+			Message: msg,
+		}
+		survey.AskOne(prompt, &value)
+		fields[fieldName] = value
+	}
+}
+
+func updateUintValue(fields map[string]interface{}, currentFieldValue string, msg string, fieldName string, newValue uint) {
+	if newValue > 0 {
+		fields[fieldName] = newValue
+		return
+	}
+	updateValue := false
+	prompt := &survey.Confirm{
+		Message: fmt.Sprintf("%s change?", currentFieldValue),
+	}
+	survey.AskOne(prompt, &updateValue)
+	if updateValue {
+		value := uint(0)
 		prompt := &survey.Input{
 			Message: msg,
 		}
@@ -208,6 +234,7 @@ func (c *Client) GetAccount() error {
 	fmt.Fprintf(w, "Name\t: %s\n", em.Name)
 	fmt.Fprintf(w, "Login\t: %s\n", em.Login)
 	fmt.Fprintf(w, "NumWorkingDays\t: %d\n", em.NumWorkingDays)
+	fmt.Fprintf(w, "NumHolidays\t: %d\n", em.NumHolidays)
 	fmt.Fprintf(w, "WeekWorkingTime\t: %s\n", formatMinutesToHoursAndMinutes(int64(em.WeekWorkingTimeInMinutes)))
 
 	w.Flush()

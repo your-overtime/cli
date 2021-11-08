@@ -10,6 +10,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/cli/internal/client"
 	"github.com/your-overtime/cli/internal/conf"
 	"github.com/your-overtime/cli/internal/out"
@@ -222,9 +223,13 @@ func main() {
 								Name:  "nwwd",
 								Usage: "change number of week working days",
 							},
+							&cli.BoolFlag{
+								Name:  "nhd",
+								Usage: "change number of holidays",
+							},
 						},
 						Action: func(c *cli.Context) error {
-							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"), c.Args().First())
+							return otc.ChangeAccount(c.Bool("name"), c.Bool("surname"), c.Bool("login"), c.Bool("password"), c.Bool("wwt"), c.Bool("nwwd"), c.Bool("nhd"), c.Args().First())
 						},
 					},
 					{
@@ -484,8 +489,9 @@ func main() {
 							},
 
 							&cli.StringFlag{
-								Name:  "description",
-								Value: "",
+								Name:    "description",
+								Aliases: []string{"d"},
+								Value:   "",
 							},
 							&cli.UintFlag{
 								Name:     "id",
@@ -573,8 +579,27 @@ func main() {
 							&cli.BoolFlag{
 								Name: "json",
 							},
+							&cli.StringFlag{
+								Name:    "type",
+								Aliases: []string{"t"},
+							},
 						},
 						Action: func(c *cli.Context) error {
+							if c.IsSet("type") {
+								hType := func(hType string) pkg.HolidayType {
+									switch c.String("type") {
+									case "sick":
+										return pkg.HolidayTypeSick
+									case "legal_holiday":
+										return pkg.HolidayTypeLegalHoliday
+									case "unpaid_free":
+										return pkg.HolidayTypeLegalUnpaidFree
+									default:
+										return pkg.HolidayTypeFree
+									}
+								}(c.String("type"))
+								return otc.GetHolidaysByType(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"), hType)
+							}
 							return otc.GetHolidays(*fixLocation(c.Timestamp("start")), *fixLocation(c.Timestamp("end")), c.Bool("json"))
 						},
 					},
@@ -661,12 +686,6 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							e := fixLocation(c.Timestamp("end"))
-							s := fixLocation(c.Timestamp("start"))
-							if e == nil {
-								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
-								e = &ce
-							}
 							return otc.UpdateHoliday(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"), c.Bool("legalholiday"), c.Bool("sick"), c.Bool("free"))
 						},
 					},
