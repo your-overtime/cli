@@ -14,6 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Define tag
+      run: |
+        echo TAG=`echo ${{ github.ref }} | sed "s/refs\/tags\/v//"` >> $GITHUB_ENV
+
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
@@ -28,19 +32,31 @@ jobs:
       env:
         GOOS: "linux"
         GOARCH: "amd64"
-      run: go build -o build/otcli_linux cmd/main.go
+      run: go build -ldflags "-X main.version=${{ env.TAG }}" -o build/otcli_linux cmd/main.go
+
+    - name: Build Linux ARM
+      env:
+        GOOS: "linux"
+        GOARCH: "arm"
+      run: go build -ldflags "-X main.version=${{ env.TAG }}" -o build/otcli_linux_arm cmd/main.go
+
+    - name: Build Linux ARM64
+      env:
+        GOOS: "linux"
+        GOARCH: "arm64"
+      run: go build -ldflags "-X main.version=${{ env.TAG }}" -o build/otcli_linux_arm64 cmd/main.go
     
     - name: Build Mac
       env:
         GOOS: "darwin"
         GOARCH: "amd64"
-      run: go build -o build/otcli_darwin cmd/main.go
+      run: go build -ldflags "-X main.version=${{ env.TAG }}" -o build/otcli_darwin cmd/main.go
 
     - name: Build Windows
       env:
         GOOS: "windows"
         GOARCH: "amd64"
-      run: go build -o build/otcli_windows.exe cmd/main.go
+      run: go build -ldflags "-X main.version=${{ env.TAG }}" -o build/otcli_windows.exe cmd/main.go
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -48,5 +64,7 @@ jobs:
       with:
         files: |
           build/otcli_linux
+          build/otcli_linux_arm
+          build/otcli_linux_arm64
           build/otcli_darwin
           build/otcli_windows.exe
