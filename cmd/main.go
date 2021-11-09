@@ -18,9 +18,10 @@ import (
 )
 
 var (
-	config *conf.Config
-	otc    *client.Client
-	err    error
+	config  *conf.Config
+	otc     *client.Client
+	err     error
+	version string = "1.0.0"
 )
 
 func setLogger(debug bool) {
@@ -50,7 +51,7 @@ func createState() error {
 		otc = &c
 		return nil
 	}
-	return errors.New("No valid config found")
+	return errors.New("no valid config found")
 }
 
 func fixLocation(t *time.Time) *time.Time {
@@ -63,10 +64,11 @@ func fixLocation(t *time.Time) *time.Time {
 
 func main() {
 	app := &cli.App{
+
 		EnableBashCompletion: true,
 		Name:                 "Overtime CLI",
 		Usage:                "Controll your working time",
-		Version:              "1.0.0",
+		Version:              version,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "debug",
@@ -106,7 +108,7 @@ func main() {
 						return nil
 					}
 					os.Exit(1)
-					return errors.New("No conf loaded")
+					return errors.New("no conf loaded")
 				},
 				Flags: []cli.Flag{
 					&cli.TimestampFlag{
@@ -138,7 +140,7 @@ func main() {
 						return nil
 					}
 					os.Exit(1)
-					return errors.New("No conf loaded")
+					return errors.New("no conf loaded")
 				},
 				Flags: []cli.Flag{
 					&cli.StringFlag{
@@ -162,7 +164,7 @@ func main() {
 						return nil
 					}
 					os.Exit(1)
-					return errors.New("No conf loaded")
+					return errors.New("no conf loaded")
 				},
 				Subcommands: []*cli.Command{
 					{
@@ -187,7 +189,7 @@ func main() {
 						return nil
 					}
 					os.Exit(1)
-					return errors.New("No conf loaded")
+					return errors.New("no conf loaded")
 				},
 				Subcommands: []*cli.Command{
 					{
@@ -307,7 +309,7 @@ func main() {
 						return nil
 					}
 					os.Exit(1)
-					return errors.New("No conf loaded")
+					return errors.New("no conf loaded")
 				},
 				Subcommands: []*cli.Command{
 					{

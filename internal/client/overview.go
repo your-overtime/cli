@@ -24,7 +24,7 @@ func (c *Client) CalcCurrentOverview() error {
 	fmt.Fprintln(w, "\nOverview")
 	fmt.Fprintf(w, "Current time\t: %s\n", utils.FormatTime(o.Date))
 	fmt.Fprintf(w, "Week number\t: %d\n", o.WeekNumber)
-	fmt.Fprintf(w, "Used hoidays\t: %d\n", o.UsedHolidays)
+	fmt.Fprintf(w, "Used holidays\t: %d\n", o.UsedHolidays)
 	fmt.Fprintf(w, "Available holidays\t: %d\n", o.HolidaysStillAvailable)
 	fmt.Fprintf(w, "Duration\t: Day\t Week\t Month \t Year\n")
 	fmt.Fprintf(w, "ActiveTime\t: %s\t %s\t %s\t %s\n",
