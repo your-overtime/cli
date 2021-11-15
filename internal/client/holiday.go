@@ -67,6 +67,34 @@ func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error 
 	return nil
 }
 
+func (c *Client) GetHolidaysByType(start time.Time, end time.Time, asJSON bool, hType pkg.HolidayType) error {
+	hs, err := c.ots.GetHolidaysByType(start, end, hType, pkg.Employee{})
+
+	if asJSON {
+		jsonData, err := json.MarshalIndent(hs, "", " ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(jsonData))
+		return nil
+	}
+	if err != nil {
+		log.Debug(err)
+		return err
+	}
+	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, '.', tabwriter.TabIndent)
+	mins := 0
+	for i, h := range hs {
+		fmt.Fprintf(w, "No\t: %d\n", i+1)
+		printHoliday(w, &h)
+		fmt.Fprintln(w)
+		mins += int(h.End.Sub(h.Start).Minutes())
+	}
+	fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(mins)))
+	w.Flush()
+	return nil
+}
+
 func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday bool, sick bool, free bool) error {
 	ch, err := c.ots.GetHoliday(id, pkg.Employee{})
 	if err != nil {

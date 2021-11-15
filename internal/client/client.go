@@ -19,17 +19,6 @@ func Init(host string, authHeader string) Client {
 	}
 }
 
-func printActivity(w *tabwriter.Writer, a *pkg.Activity) {
-	fmt.Fprintf(w, "ID\t: %d\n", a.ID)
-	fmt.Fprintf(w, "Description\t: %s\n", a.Description)
-	fmt.Fprintf(w, "Start\t: %s\n", utils.FormatTime(*a.Start))
-	if a.End != nil {
-		fmt.Fprintf(w, "End\t: %s\n", utils.FormatTime(*a.End))
-		diff := a.End.Sub(*a.Start)
-		fmt.Fprintf(w, "Duration\t: %s\n", formatMinutes(int64(diff.Minutes())))
-	}
-}
-
 func printHoliday(w *tabwriter.Writer, a *pkg.Holiday) {
 	fmt.Fprintf(w, "ID\t: %d\n", a.ID)
 	fmt.Fprintf(w, "Description\t: %s\n", a.Description)
