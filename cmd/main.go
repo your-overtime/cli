@@ -501,7 +501,7 @@ func main() {
 							},
 						},
 						Action: func(c *cli.Context) error {
-							a, err := otc.UpdateActivity(c.String("desc"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
+							a, err := otc.UpdateActivity(c.String("description"), fixLocation(c.Timestamp("start")), fixLocation(c.Timestamp("end")), c.Uint("id"))
 							if err != nil {
 								return err
 							}
