@@ -83,7 +83,12 @@ func (c *Client) ImportKimai(filePath string) error {
 }
 
 func (c *Client) StartActivity(desc string) (*pkg.Activity, error) {
-	return c.ots.StartActivity(desc, pkg.Employee{})
+	start := time.Now()
+	return c.ots.AddActivity(pkg.Activity{
+		Start:       &start,
+		Description: desc,
+		End:         nil,
+	}, pkg.Employee{})
 }
 
 func (c *Client) StopActivity() (*pkg.Activity, error) {
