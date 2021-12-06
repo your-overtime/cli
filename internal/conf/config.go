@@ -10,6 +10,7 @@ type Config struct {
 	Host                string
 	Token               string
 	DefaultActivityDesc string
+	CustomCommands      map[string]string
 }
 
 func getConfDir() (string, error) {
@@ -27,6 +28,9 @@ func WriteConfig(c Config) error {
 		return err
 	}
 	bytes, err := json.MarshalIndent(&c, "", " ")
+	if err != nil {
+		return err
+	}
 
 	return os.WriteFile(path.Join(confDir, "conf.json"), bytes, os.ModePerm)
 }
@@ -44,6 +48,16 @@ func LoadConfig() (*Config, error) {
 	err = json.Unmarshal(bytes, &c)
 	if err != nil {
 		return nil, err
+	}
+
+	commandDir := path.Join(confDir, "commands")
+	commands, err := os.ReadDir(commandDir)
+	c.CustomCommands = map[string]string{}
+	if err == nil {
+
+		for _, command := range commands {
+			c.CustomCommands[command.Name()] = path.Join(commandDir, command.Name())
+		}
 	}
 
 	return &c, nil
