@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -80,6 +81,20 @@ func main() {
 		Before: func(c *cli.Context) error {
 			setLogger(c.Bool("debug"))
 			return nil
+		},
+		Action: func(c *cli.Context) error {
+			if c.NArg() > 0 {
+				loadConfig()
+				cmd := c.Args().First()
+				if commandPath, exists := config.CustomCommands[cmd]; exists {
+					exe := exec.Command(commandPath)
+					exe.Env = []string{fmt.Sprintf("OT_HOST=%s", config.Host), fmt.Sprintf("OT_AUTH=%s", config.Token)}
+					exe.Args = append(exe.Args, c.Args().Tail()...)
+					exe.Stdout = c.App.Writer
+					return exe.Run()
+				}
+			}
+			return errors.New("unknown custom command")
 		},
 		Commands: []*cli.Command{
 			{
