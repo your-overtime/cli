@@ -58,7 +58,7 @@ func (c *Client) ChangeAccount(cn bool, cs bool, cl bool, cp bool, cwwt bool, cw
 		updateUintValue(fields, fmt.Sprintf("NumHolidays: %d", e.NumHolidays), "Please type the new number of holidays per year", "NumHolidays", uintValue)
 	}
 
-	em, err := c.ots.UpdateAccount(fields, pkg.Employee{})
+	em, err := c.ots.UpdateAccount(fields, pkg.User{})
 	if err != nil {
 		if err.Error() == "400 Bad Request" {
 			fmt.Println("A account with the new login already exist")

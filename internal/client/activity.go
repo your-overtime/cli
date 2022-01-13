@@ -14,14 +14,16 @@ import (
 
 func (c *Client) AddActivity(desc string, start *time.Time, end *time.Time) (*pkg.Activity, error) {
 	return c.ots.AddActivity(pkg.Activity{
-		Start:       start,
-		End:         end,
-		Description: desc,
-	}, pkg.Employee{})
+		InputActivity: pkg.InputActivity{
+			Start:       start,
+			End:         end,
+			Description: desc,
+		},
+	})
 }
 
 func (c *Client) UpdateActivity(desc string, start *time.Time, end *time.Time, id uint) (*pkg.Activity, error) {
-	ca, err := c.ots.GetActivity(id, pkg.Employee{})
+	ca, err := c.ots.GetActivity(id)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -35,11 +37,11 @@ func (c *Client) UpdateActivity(desc string, start *time.Time, end *time.Time, i
 	if end != nil {
 		ca.End = end
 	}
-	return c.ots.UpdateActivity(*ca, pkg.Employee{})
+	return c.ots.UpdateActivity(*ca)
 }
 
 func (c *Client) DeleteActivity(id uint) error {
-	return c.ots.DelActivity(id, pkg.Employee{})
+	return c.ots.DelActivity(id)
 }
 
 func (c *Client) ImportKimai(filePath string) error {
@@ -85,14 +87,16 @@ func (c *Client) ImportKimai(filePath string) error {
 func (c *Client) StartActivity(desc string) (*pkg.Activity, error) {
 	start := time.Now()
 	return c.ots.AddActivity(pkg.Activity{
-		Start:       &start,
-		Description: desc,
-		End:         nil,
-	}, pkg.Employee{})
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			Description: desc,
+			End:         nil,
+		},
+	})
 }
 
 func (c *Client) StopActivity() (*pkg.Activity, error) {
-	a, err := c.ots.StopRunningActivity(pkg.Employee{})
+	a, err := c.ots.StopRunningActivity()
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -104,5 +108,5 @@ func (c *Client) StopActivity() (*pkg.Activity, error) {
 }
 
 func (c *Client) GetActivities(start time.Time, end time.Time) ([]pkg.Activity, error) {
-	return c.ots.GetActivities(start, end, pkg.Employee{})
+	return c.ots.GetActivities(start, end)
 }

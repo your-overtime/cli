@@ -21,11 +21,13 @@ func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHo
 	}
 
 	h, err := c.ots.AddHoliday(pkg.Holiday{
-		Start:       start,
-		End:         end,
-		Description: desc,
-		Type:        hType,
-	}, pkg.Employee{})
+		InputHoliday: pkg.InputHoliday{
+			Start:       start,
+			End:         end,
+			Description: desc,
+			Type:        hType,
+		},
+	})
 
 	if err != nil {
 		log.Debug(err)
@@ -40,7 +42,7 @@ func (c *Client) AddHoliday(desc string, start time.Time, end time.Time, legalHo
 }
 
 func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error {
-	hs, err := c.ots.GetHolidays(start, end, pkg.Employee{})
+	hs, err := c.ots.GetHolidays(start, end)
 
 	if asJSON {
 		jsonData, err := json.MarshalIndent(hs, "", " ")
@@ -68,7 +70,7 @@ func (c *Client) GetHolidays(start time.Time, end time.Time, asJSON bool) error 
 }
 
 func (c *Client) GetHolidaysByType(start time.Time, end time.Time, asJSON bool, hType pkg.HolidayType) error {
-	hs, err := c.ots.GetHolidaysByType(start, end, hType, pkg.Employee{})
+	hs, err := c.ots.GetHolidaysByType(start, end, hType)
 
 	if asJSON {
 		jsonData, err := json.MarshalIndent(hs, "", " ")
@@ -96,7 +98,7 @@ func (c *Client) GetHolidaysByType(start time.Time, end time.Time, asJSON bool, 
 }
 
 func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id uint, legalHoliday bool, sick bool, free bool) error {
-	ch, err := c.ots.GetHoliday(id, pkg.Employee{})
+	ch, err := c.ots.GetHoliday(id)
 	if err != nil {
 		log.Debug(err)
 		return err
@@ -119,7 +121,7 @@ func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id
 	if end != nil {
 		ch.End = *end
 	}
-	h, err := c.ots.UpdateHoliday(*ch, pkg.Employee{})
+	h, err := c.ots.UpdateHoliday(*ch)
 
 	if err != nil {
 		log.Debug(err)
@@ -134,7 +136,7 @@ func (c *Client) UpdateHoliday(desc string, start *time.Time, end *time.Time, id
 }
 
 func (c *Client) DeleteHoliday(id uint) error {
-	err := c.ots.DelHoliday(id, pkg.Employee{})
+	err := c.ots.DelHoliday(id)
 
 	if err != nil {
 		log.Debug(err)

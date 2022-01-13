@@ -8,12 +8,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/cli/internal/utils"
 )
 
 func (c *Client) CalcCurrentOverview() error {
-	o, err := c.ots.CalcOverview(pkg.Employee{}, time.Now())
+	o, err := c.ots.CalcOverview(time.Now())
 	if err != nil {
 		log.Debug(err)
 		return err
