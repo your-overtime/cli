@@ -2,21 +2,20 @@ package client
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"text/tabwriter"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/your-overtime/api/pkg"
 )
 
 func (c *Client) AddEmployee(name string, surname string, login string, pw string, wwt uint, nwwd uint, adminToken string) error {
-	e, err := c.ots.SaveEmployee(pkg.Employee{
-		User: &pkg.User{
-			Name:     name,
-			Surname:  surname,
-			Login:    login,
-			Password: pw,
-		},
+	e, err := c.ots.SaveUser(pkg.User{
+		Name:                     name,
+		Surname:                  surname,
+		Login:                    login,
+		Password:                 pw,
 		WeekWorkingTimeInMinutes: wwt,
 		NumWorkingDays:           nwwd,
 	}, adminToken)
@@ -37,7 +36,7 @@ func (c *Client) AddEmployee(name string, surname string, login string, pw strin
 }
 
 func (c *Client) DeleteEmployee(login string, adminToken string) error {
-	err := c.ots.DeleteEmployee(login, adminToken)
+	err := c.ots.DeleteUser(login, adminToken)
 
 	if err != nil {
 		log.Debug(err)

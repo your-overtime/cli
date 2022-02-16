@@ -26,7 +26,7 @@ func (c *Client) CreateTokenViaCli(name string) error {
 }
 
 func (c *Client) CreateToken(name string) (*pkg.Token, error) {
-	t, err := c.ots.CreateToken(pkg.InputToken{Name: name}, pkg.Employee{})
+	t, err := c.ots.CreateToken(pkg.InputToken{Name: name})
 
 	if err != nil {
 		log.Debug(err)
@@ -37,7 +37,7 @@ func (c *Client) CreateToken(name string) (*pkg.Token, error) {
 }
 
 func (c *Client) DeleteToken(id uint) error {
-	err := c.ots.DeleteToken(id, pkg.Employee{})
+	err := c.ots.DeleteToken(id)
 
 	if err != nil {
 		log.Debug(err)
@@ -50,7 +50,7 @@ func (c *Client) DeleteToken(id uint) error {
 }
 
 func (c *Client) GetTokens() error {
-	ts, err := c.ots.GetTokens(pkg.Employee{})
+	ts, err := c.ots.GetTokens()
 
 	if err != nil {
 		log.Debug(err)

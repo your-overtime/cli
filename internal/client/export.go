@@ -8,8 +8,6 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/your-overtime/api/pkg"
 )
 
 func (c *Client) Export(since *time.Time, output string) error {
@@ -22,21 +20,21 @@ func (c *Client) Export(since *time.Time, output string) error {
 
 	exportData := ExportData{}
 
-	acs, err := c.ots.GetActivities(*since, now, pkg.Employee{})
+	acs, err := c.ots.GetActivities(*since, now)
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 	exportData.Activities = acs
 
-	hds, err := c.ots.GetHolidays(*since, now, pkg.Employee{})
+	hds, err := c.ots.GetHolidays(*since, now)
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 	exportData.Holidays = hds
 
-	wds, err := c.ots.GetWorkDays(*since, now, pkg.Employee{})
+	wds, err := c.ots.GetWorkDays(*since, now)
 	if err != nil {
 		log.Debug(err)
 		return err

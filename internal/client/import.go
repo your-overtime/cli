@@ -6,8 +6,6 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/your-overtime/api/pkg"
 )
 
 func (c *Client) Import(input string) error {
@@ -26,7 +24,7 @@ func (c *Client) Import(input string) error {
 	}
 
 	for _, a := range exportData.Activities {
-		_, err := c.ots.AddActivity(a, pkg.Employee{})
+		_, err := c.ots.AddActivity(a)
 		if err != nil {
 			log.Debug(err)
 			return err
@@ -34,7 +32,7 @@ func (c *Client) Import(input string) error {
 	}
 
 	for _, h := range exportData.Holidays {
-		_, err := c.ots.AddHoliday(h, pkg.Employee{})
+		_, err := c.ots.AddHoliday(h)
 		if err != nil {
 			log.Debug(err)
 			return err
@@ -42,7 +40,7 @@ func (c *Client) Import(input string) error {
 	}
 
 	for _, h := range exportData.WorkDays {
-		_, err := c.ots.AddWorkDay(h, pkg.Employee{})
+		_, err := c.ots.AddWorkDay(h)
 		if err != nil {
 			log.Debug(err)
 			return err
