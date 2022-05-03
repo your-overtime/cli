@@ -24,6 +24,10 @@ func FormatTime(t time.Time) string {
 	return t.Format("2006-01-02 15:04")
 }
 
+func FormatDay(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
 func Today() time.Time {
 	today, err := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
 	if err != nil {

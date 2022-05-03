@@ -381,7 +381,7 @@ func main() {
 							if err != nil {
 								if client.IsConflictErr(err) {
 									fmt.Println("\nA activity is currently running")
-									return otc.CalcCurrentOverview()
+									return otc.CalcCurrentOverview(time.Now())
 								}
 								return err
 							}
@@ -410,9 +410,17 @@ func main() {
 					{
 						Name:    "overview",
 						Aliases: []string{"o"},
-						Usage:   "shows current overview",
+						Flags: []cli.Flag{
+							&cli.TimestampFlag{
+								Name:    "time",
+								Aliases: []string{"t"},
+								Value:   cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, time.Now().Location())),
+								Layout:  "2006-01-02 15:04",
+							},
+						},
+						Usage: "shows current overview",
 						Action: func(c *cli.Context) error {
-							return otc.CalcCurrentOverview()
+							return otc.CalcCurrentOverview(*c.Timestamp("time"))
 						},
 					},
 					{
