@@ -110,3 +110,12 @@ func (c *Client) StopActivity() (*pkg.Activity, error) {
 func (c *Client) GetActivities(start time.Time, end time.Time) ([]pkg.Activity, error) {
 	return c.ots.GetActivities(start, end)
 }
+
+func (c *Client) CreateActivitiesIcalShareLink(name string) (string, error) {
+	token, err := c.CreateToken(name, true)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s?token=%s", c.APIHost, token.Token), nil
+}

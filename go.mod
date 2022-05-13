@@ -7,7 +7,7 @@ require (
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/urfave/cli/v2 v2.3.0
-	github.com/your-overtime/api v1.5.3
+	github.com/your-overtime/api v1.5.6
 )
 
 require (

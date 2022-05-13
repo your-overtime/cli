@@ -10,12 +10,14 @@ import (
 )
 
 type Client struct {
-	ots pkg.OvertimeService
+	ots     pkg.OvertimeService
+	APIHost string
 }
 
 func Init(host string, authHeader string) Client {
 	return Client{
-		ots: pkg.InitOvertimeClient(host, authHeader),
+		ots:     pkg.InitOvertimeClient(host, authHeader),
+		APIHost: host,
 	}
 }
 

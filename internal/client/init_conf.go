@@ -192,7 +192,7 @@ func InitConf() error {
 			password = answers2.Password
 		}
 		c := Init(url, basicAuth(login, password))
-		t, err := c.CreateToken(fmt.Sprintf("CLI %s", time.Now()))
+		t, err := c.CreateToken(fmt.Sprintf("CLI %s", time.Now()), false)
 		if err != nil {
 			return err
 		}
