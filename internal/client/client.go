@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"text/tabwriter"
+	"strings"
 
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/cli/internal/utils"
@@ -15,6 +16,9 @@ type Client struct {
 }
 
 func Init(host string, authHeader string) Client {
+	if !strings.HasSuffix(host, "/") {
+		host = host + "/"
+	}
 	return Client{
 		ots:     pkg.InitOvertimeClient(host, authHeader),
 		APIHost: host,

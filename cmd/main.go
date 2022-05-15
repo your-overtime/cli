@@ -64,6 +64,33 @@ func fixLocation(t *time.Time) *time.Time {
 }
 
 func main() {
+	overviewCmd := cli.Command{
+		Name:    "overview",
+		Aliases: []string{"o"},
+		Flags: []cli.Flag{
+			&cli.TimestampFlag{
+				Name:    "time",
+				Aliases: []string{"t", "d"},
+				Value:   cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, time.Now().Location())),
+				Layout:  "2006-01-02 15:04",
+			},
+		},
+		Usage: "shows current overview",
+		Before: func(c *cli.Context) error {
+			err := createState()
+			if err == nil {
+				c := client.Init(config.Host, config.Token)
+				otc = &c
+				return nil
+			}
+			os.Exit(1)
+			return errors.New("no conf loaded")
+		},
+		Action: func(c *cli.Context) error {
+			return otc.CalcCurrentOverview(*c.Timestamp("time"))
+		},
+	}
+
 	app := &cli.App{
 
 		EnableBashCompletion: true,
@@ -97,32 +124,7 @@ func main() {
 			return errors.New("unknown custom command")
 		},
 		Commands: []*cli.Command{
-			{
-				Name:    "overview",
-				Aliases: []string{"o"},
-				Flags: []cli.Flag{
-					&cli.TimestampFlag{
-						Name:    "time",
-						Aliases: []string{"t", "d"},
-						Value:   cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, time.Now().Location())),
-						Layout:  "2006-01-02 15:04",
-					},
-				},
-				Usage: "shows current overview",
-				Before: func(c *cli.Context) error {
-					err := createState()
-					if err == nil {
-						c := client.Init(config.Host, config.Token)
-						otc = &c
-						return nil
-					}
-					os.Exit(1)
-					return errors.New("no conf loaded")
-				},
-				Action: func(c *cli.Context) error {
-					return otc.CalcCurrentOverview(*c.Timestamp("time"))
-				},
-			},
+			&overviewCmd,
 			{
 				Name:    "conf",
 				Aliases: []string{"c"},
@@ -440,22 +442,7 @@ func main() {
 							return nil
 						},
 					},
-					{
-						Name:    "overview",
-						Aliases: []string{"o"},
-						Flags: []cli.Flag{
-							&cli.TimestampFlag{
-								Name:    "time",
-								Aliases: []string{"t", "d"},
-								Value:   cli.NewTimestamp(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, time.Now().Location())),
-								Layout:  "2006-01-02 15:04",
-							},
-						},
-						Usage: "shows current overview",
-						Action: func(c *cli.Context) error {
-							return otc.CalcCurrentOverview(*c.Timestamp("time"))
-						},
-					},
+					&overviewCmd,
 					{
 						Name:    "get",
 						Aliases: []string{"g"},
@@ -779,6 +766,26 @@ func main() {
 						},
 						Action: func(c *cli.Context) error {
 							return otc.DeleteHoliday(c.Uint("id"))
+						},
+					},
+					{
+						Name:        "ical",
+						Aliases:     []string{"ic"},
+						Description: "creates ical share link with readonly access token",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+						},
+						Action: func(ctx *cli.Context) error {
+							link, err := otc.CreateHolidayIcalShareLink(ctx.String("name"))
+							if err != nil {
+								return err
+							}
+							fmt.Println(link)
+							return nil
 						},
 					},
 				},

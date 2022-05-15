@@ -117,5 +117,5 @@ func (c *Client) CreateActivitiesIcalShareLink(name string) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%s?token=%s", c.APIHost, token.Token), nil
+	return fmt.Sprintf("%sapi/v1/activities.ics?token=%s", c.APIHost, token.Token), nil
 }
