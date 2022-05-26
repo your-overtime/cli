@@ -555,7 +555,7 @@ func main() {
 					{
 						Name:    "delete",
 						Aliases: []string{"d"},
-						Usage:   "deletes a activity",
+						Usage:   "deletes an activity",
 						Flags: []cli.Flag{
 							&cli.UintFlag{
 								Name:     "id",
