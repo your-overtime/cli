@@ -11,8 +11,8 @@ import (
 	"github.com/your-overtime/cli/internal/utils"
 )
 
-func (c *Client) CalcCurrentOverview() error {
-	o, err := c.ots.CalcOverview(time.Now())
+func (c *Client) CalcCurrentOverview(t time.Time) error {
+	o, err := c.ots.CalcOverview(t)
 	if err != nil {
 		log.Debug(err)
 		return err
@@ -21,7 +21,7 @@ func (c *Client) CalcCurrentOverview() error {
 	w := tabwriter.NewWriter(os.Stdout, 16, 4, 3, '.', tabwriter.TabIndent)
 
 	fmt.Fprintln(w, "\nOverview")
-	fmt.Fprintf(w, "Current time\t: %s\n", utils.FormatTime(o.Date))
+	fmt.Fprintf(w, "Date\t: %s\n", utils.FormatTime(o.Date))
 	fmt.Fprintf(w, "Week number\t: %d\n", o.WeekNumber)
 	fmt.Fprintf(w, "Used holidays\t: %d\n", o.UsedHolidays)
 	fmt.Fprintf(w, "Available holidays\t: %d\n", o.HolidaysStillAvailable)

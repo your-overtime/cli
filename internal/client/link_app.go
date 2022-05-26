@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/your-overtime/cli/internal/conf"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/mdp/qrterminal/v3"
+	"github.com/your-overtime/cli/internal/conf"
 )
 
 func (c *Client) LinkApp() error {
@@ -24,7 +24,7 @@ func (c *Client) LinkApp() error {
 	survey.AskOne(prompt, &newToken)
 	if newToken {
 		now := time.Now()
-		t, err := c.CreateToken(fmt.Sprintf("APP %s", now))
+		t, err := c.CreateToken(fmt.Sprintf("APP %s", now), false)
 		if err != nil {
 			return err
 		}
@@ -44,6 +44,9 @@ func (c *Client) LinkApp() error {
 		QuietZone: 4,
 	}
 	payload, err := json.Marshal(map[string]string{"url": co.Host, "authheader": token, "desc": co.DefaultActivityDesc})
+	if err != nil {
+		return err
+	}
 	qrterminal.GenerateWithConfig(string(payload), qc)
 
 	return nil

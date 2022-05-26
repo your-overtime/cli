@@ -147,3 +147,12 @@ func (c *Client) DeleteHoliday(id uint) error {
 
 	return nil
 }
+
+func (c *Client) CreateHolidayIcalShareLink(name string) (string, error) {
+	token, err := c.CreateToken(name, true)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%sapi/v1/holidays.ics?token=%s", c.APIHost, token.Token), nil
+}

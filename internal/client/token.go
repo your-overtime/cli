@@ -10,8 +10,8 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (c *Client) CreateTokenViaCli(name string) error {
-	t, err := c.CreateToken(name)
+func (c *Client) CreateTokenViaCli(name string, readonly bool) error {
+	t, err := c.CreateToken(name, readonly)
 	if err != nil {
 		return err
 	}
@@ -25,8 +25,8 @@ func (c *Client) CreateTokenViaCli(name string) error {
 	return nil
 }
 
-func (c *Client) CreateToken(name string) (*pkg.Token, error) {
-	t, err := c.ots.CreateToken(pkg.InputToken{Name: name})
+func (c *Client) CreateToken(name string, readonly bool) (*pkg.Token, error) {
+	t, err := c.ots.CreateToken(pkg.InputToken{Name: name, Readonly: readonly})
 
 	if err != nil {
 		log.Debug(err)
