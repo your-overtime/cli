@@ -3,10 +3,10 @@ package client
 import (
 	"fmt"
 	"math"
-	"text/tabwriter"
 	"strings"
+	"text/tabwriter"
 
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 	"github.com/your-overtime/cli/internal/utils"
 )
 

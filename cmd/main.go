@@ -11,7 +11,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 	"github.com/your-overtime/cli/internal/client"
 	"github.com/your-overtime/cli/internal/conf"
 	"github.com/your-overtime/cli/internal/out"
