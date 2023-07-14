@@ -63,6 +63,14 @@ func fixLocation(t *time.Time) *time.Time {
 	return nil
 }
 
+func endDate(t *time.Time) *time.Time {
+	if t != nil {
+		newT := time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, time.Local)
+		return &newT
+	}
+	return nil
+}
+
 func main() {
 	overviewCmd := cli.Command{
 		Name:    "overview",
@@ -707,7 +715,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.AddHoliday(c.String("description"), *s, *e, c.Bool("legalholiday"), c.Bool("sick"))
+							return otc.AddHoliday(c.String("description"), *s, *endDate(e), c.Bool("legalholiday"), c.Bool("sick"))
 						},
 					},
 					{
