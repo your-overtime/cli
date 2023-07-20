@@ -7,7 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 )
 
 func (c *Client) AddEmployee(name string, surname string, login string, pw string, wwt uint, nwwd uint, adminToken string) error {

@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 )
 
 func (c *Client) AddActivity(desc string, start *time.Time, end *time.Time) (*pkg.Activity, error) {
@@ -85,14 +85,7 @@ func (c *Client) ImportKimai(filePath string) error {
 }
 
 func (c *Client) StartActivity(desc string) (*pkg.Activity, error) {
-	start := time.Now()
-	return c.ots.AddActivity(pkg.Activity{
-		InputActivity: pkg.InputActivity{
-			Start:       &start,
-			Description: desc,
-			End:         nil,
-		},
-	})
+	return c.ots.StartActivity(desc)
 }
 
 func (c *Client) StopActivity() (*pkg.Activity, error) {

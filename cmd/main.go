@@ -11,7 +11,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 	"github.com/your-overtime/cli/internal/client"
 	"github.com/your-overtime/cli/internal/conf"
 	"github.com/your-overtime/cli/internal/out"
@@ -58,6 +58,14 @@ func createState() error {
 func fixLocation(t *time.Time) *time.Time {
 	if t != nil {
 		newT := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, time.Local)
+		return &newT
+	}
+	return nil
+}
+
+func endDate(t *time.Time) *time.Time {
+	if t != nil {
+		newT := time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, time.Local)
 		return &newT
 	}
 	return nil
@@ -707,7 +715,7 @@ func main() {
 								ce := time.Date(s.Year(), s.Month(), s.Day(), 23, 59, 59, 59, s.Location())
 								e = &ce
 							}
-							return otc.AddHoliday(c.String("description"), *s, *e, c.Bool("legalholiday"), c.Bool("sick"))
+							return otc.AddHoliday(c.String("description"), *s, *endDate(e), c.Bool("legalholiday"), c.Bool("sick"))
 						},
 					},
 					{
