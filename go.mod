@@ -7,7 +7,7 @@ require (
 	github.com/mdp/qrterminal/v3 v3.1.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/urfave/cli/v2 v2.25.7
-	github.com/your-overtime/api/v2/pkg v0.0.0-20230714193208-7a784af2ac83
+	github.com/your-overtime/api/v2/pkg v0.0.0-20230912184601-c5cee87fd937
 )
 
 require (
@@ -18,8 +18,8 @@ require (
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/term v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/term v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	rsc.io/qr v0.2.0 // indirect
 )
